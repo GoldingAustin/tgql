@@ -1,26 +1,10 @@
 import { expect, test, describe } from 'bun:test';
 import { tgql } from '../src/index.ts';
 import { graphql, printSchema } from 'graphql';
-import exp from 'constants';
+import { User } from './shared.ts';
 
 describe('tGQL Resolvers', () => {
-	const User = tgql
-		.object('User', {
-			id: tgql.id(),
-			firstName: tgql.string(),
-			lastName: tgql.string(),
-			age: tgql.int(),
-			weight: tgql.float().nullable(),
-			favoriteNumbers: tgql.list(tgql.int()),
-		})
-		.fieldResolvers((builder) => ({
-			fullName: builder.fieldResolver(tgql.string(), (user) => `${user.firstName} ${user.lastName}`),
-			fullMiddleName: builder.fieldResolver(
-				tgql.string(),
-				{ middle: tgql.string() },
-				(user, args) => `${user.firstName} ${user.lastName} ${args.middle}`,
-			),
-		}));
+	const birthdate = new Date('2020-01-01');
 
 	const UserInput = tgql.inputObject('UserInput', {
 		firstName: tgql.string().nullable().defaultValue('Bob'),
@@ -32,7 +16,6 @@ describe('tGQL Resolvers', () => {
 
 	test('basic', async () => {
 		const resolvers = new tgql.SchemaBuilder<{ currentUser: string }>();
-
 		resolvers
 			.query('user')
 			.returns(User)
@@ -44,13 +27,13 @@ describe('tGQL Resolvers', () => {
 					firstName: 'first',
 					lastName: 'last',
 					age: 10,
+					birthdate,
 					favoriteNumbers: [1, 2],
 				};
 			});
 
 		const schema = resolvers.createSchema();
 		expect(schema).toBeDefined();
-
 		expect(printSchema(schema)).toMatch(expectedSchema);
 
 		const result = await graphql({
@@ -60,16 +43,19 @@ describe('tGQL Resolvers', () => {
 									id
 									favoriteNumbers
 									weight
+									birthdate
 									fullMiddleName(middle: "middle")
 								}
 							}`,
 			contextValue: { currentUser: 'Bob 2' },
 		});
+
 		expect(result.data).toEqual({
 			user: {
 				id: '10',
 				favoriteNumbers: [1, 2],
 				weight: null,
+				birthdate: birthdate.getTime(),
 				fullMiddleName: 'first last middle',
 			},
 		});
@@ -88,6 +74,7 @@ describe('tGQL Resolvers', () => {
 					firstName: user.firstName,
 					lastName: user.lastName,
 					age: user.age,
+					birthdate,
 					weight: user.weight,
 					favoriteNumbers: [1, 2],
 				};
@@ -97,9 +84,9 @@ describe('tGQL Resolvers', () => {
 	test('simple middleware', async () => {
 		type Context = { currentUser: string };
 		const resolvers = new tgql.SchemaBuilder<Context>();
-		const simpleMiddleware: tgql.Middleware<Context, any, any, any> = async ({context}) => {
+		const simpleMiddleware: tgql.Middleware<Context, any, any, any> = async ({ context }) => {
 			expect(context.currentUser).toMatch('Bob 2');
-		}
+		};
 		resolvers
 			.query('user')
 			.returns(User)
@@ -110,6 +97,7 @@ describe('tGQL Resolvers', () => {
 					id,
 					firstName: 'first',
 					lastName: 'last',
+					birthdate,
 					age: 10,
 					favoriteNumbers: [1, 2],
 				};
@@ -142,6 +130,10 @@ type User {
   age: Int!
   weight: Float
   favoriteNumbers: [Int!]!
+  birthdate: Date!
   fullName: String!
   fullMiddleName(middle: String!): String!
-}`;
+}
+
+"""Date custom scalar type"""
+scalar Date`;

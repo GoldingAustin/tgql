@@ -9,8 +9,9 @@ import {
 	tGQLList,
 	tGQLInputObject,
 } from './index.ts';
-import { GraphQLBoolean, GraphQLFloat, GraphQLID, GraphQLInt, GraphQLString } from 'graphql';
+import { GraphQLBoolean, GraphQLFloat, GraphQLID, GraphQLInt, GraphQLScalarType, GraphQLString } from 'graphql';
 import type { tGQLBaseTypeAny, tGQLInputTypes, tGQLObjectFieldsBase, tGQLOutputTypes } from '../types.ts';
+import { tGQLCustomScalar } from './scalars.ts';
 
 export function id(): tGQLID {
 	return new tGQLID({ graphQLType: GraphQLID });
@@ -32,7 +33,11 @@ export function boolean(): tGQLBool {
 	return new tGQLBool({ graphQLType: GraphQLBoolean });
 }
 
-export function enum_<T extends string[] | readonly string[]>(name: string, values: T): tGQLEnum<T> {
+export function scalar<GraphQLType extends GraphQLScalarType>(graphQLType: GraphQLType): tGQLCustomScalar<GraphQLType> {
+	return new tGQLCustomScalar({ name: graphQLType.name, graphQLType });
+}
+
+function enum_<T extends string[] | readonly string[]>(name: string, values: T): tGQLEnum<T> {
 	return new tGQLEnum(name, values);
 }
 
@@ -50,3 +55,5 @@ export function inputObject<T extends tGQLObjectFieldsBase<tGQLInputTypes>>(
 ): tGQLInputObject<T> {
 	return new tGQLInputObject(name, fields);
 }
+
+export { enum_ as enum };

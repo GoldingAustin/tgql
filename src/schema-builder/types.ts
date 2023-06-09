@@ -1,4 +1,4 @@
-import type { tGQLObject,  tGQLNullable, tGQLFieldResolver } from '../types-builder/index.ts';
+import type { tGQLObject, tGQLNullable, tGQLFieldResolver } from '../types-builder/index.ts';
 import type { Expand, Infer, tGQLBaseTypeAny, tGQLInputTypes, tGQLOutputTypes, UndefinedAsOptional } from '../types.ts';
 import type { GraphQLResolveInfo } from 'graphql';
 

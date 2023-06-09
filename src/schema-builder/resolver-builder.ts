@@ -3,9 +3,9 @@ import {
 	GraphQLFieldConfigArgumentMap,
 	GraphQLFieldConfigMap,
 	GraphQLInputFieldMap,
+	GraphQLFieldResolver,
 } from 'graphql';
 import type { tGQLObject } from '../types-builder/index.ts';
-import type { GraphQLFieldResolver } from 'graphql/type/definition';
 import type { ArgsInput, InferArgs, InferResolverReturn, Middleware, Resolver } from './types.ts';
 import type { tGQLOutputTypes } from '../types.ts';
 

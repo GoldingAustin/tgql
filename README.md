@@ -81,6 +81,8 @@ const schema = resolvers.createSchema();
 - [x] type inference
 - [x] simple middleware
 - [x] basic schema builder
+- [x] Add support for custom scalars
+- [x] Add object to input object utility
 
 ## TODO
 
@@ -94,4 +96,3 @@ const schema = resolvers.createSchema();
 - [ ] Add support for fragments
 - [ ] Add support for unions
 - [ ] Add support for interfaces
-- [ ] Add support for custom scalars

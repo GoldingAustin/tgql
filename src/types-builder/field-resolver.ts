@@ -1,7 +1,8 @@
 import type { GraphQLOutputType } from 'graphql';
-import { type tGQLObject, tGQLNonNull } from './index.ts';
+import { tGQLNonNull } from './index.ts';
 import type { Infer, tGQLOutputTypes } from '../types.ts';
-import { ArgsInput, InferArgs } from '../schema-builder/types.ts';
+import type { ArgsInput, InferArgs } from '../schema-builder/types.ts';
+import type { tGQLBaseTypeAny } from '../types.ts';
 
 export class tGQLFieldResolver<
 	tGQLType extends tGQLOutputTypes,
@@ -9,6 +10,7 @@ export class tGQLFieldResolver<
 	Parent,
 > extends tGQLNonNull<tGQLType, Infer<tGQLType>, GraphQLOutputType> {
 	private readonly _args: Args | undefined;
+	override readonly _class = 'tGQLFieldResolver' as const;
 
 	constructor(tGQLType: tGQLType, public resolver: (parent: Parent, args: Args) => Infer<tGQLType>, args?: Args) {
 		super({ tGQLType });
@@ -27,16 +29,29 @@ export class tGQLFieldResolver<
 	}
 }
 
-export interface FieldResolver<T extends tGQLObject<any>> {
+export class FieldResolverBuilder<tGQLType extends tGQLBaseTypeAny> extends tGQLNonNull<
+	tGQLType,
+	Infer<tGQLType> | undefined,
+	tGQLType['_graphQLType']['ofType']
+> {
+	override readonly _class = 'FieldResolverBuilder' as const;
+
 	fieldResolver<ReturnType extends tGQLOutputTypes>(
 		returnType: ReturnType,
-		resolver: (value: Infer<T>, args: undefined) => Infer<ReturnType>,
-	): tGQLFieldResolver<ReturnType, ArgsInput | undefined, Infer<T>>;
+		resolver: (value: Infer<tGQLType>, args: undefined) => Infer<ReturnType>,
+	): tGQLFieldResolver<ReturnType, ArgsInput | undefined, Infer<tGQLType>>;
 	fieldResolver<ReturnType extends tGQLOutputTypes, Args extends ArgsInput>(
 		returnType: ReturnType,
 		args: Args,
-		resolver: (value: Infer<T>, args: InferArgs<Args>) => Infer<ReturnType>,
-	): tGQLFieldResolver<ReturnType, Args, Infer<T>>;
+		resolver: (value: Infer<tGQLType>, args: InferArgs<Args>) => Infer<ReturnType>,
+	): tGQLFieldResolver<ReturnType, Args, Infer<tGQLType>>;
+	fieldResolver<ResolveType extends tGQLOutputTypes, Args extends ArgsInput>(
+		type: ResolveType,
+		args: Args | ((value: Infer<tGQLType>) => Infer<ResolveType>),
+		resolver?: (value: Infer<tGQLType>, args: Args) => Infer<ResolveType>,
+	): tGQLFieldResolver<ResolveType, Args, Infer<tGQLType>> {
+		return resolver
+			? new tGQLFieldResolver(type, resolver, args as Args)
+			: new tGQLFieldResolver(type, args as (value: Infer<this>) => Infer<ResolveType>);
+	}
 }
-
-export type FieldResolverBuilder<T extends tGQLObject<any>> = Omit<T, 'fieldResolver'> & FieldResolver<T>;

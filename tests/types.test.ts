@@ -1,7 +1,8 @@
 import { expect, test, describe } from 'bun:test';
 import { tgql } from '../src/index.ts';
-import { GraphQLFloat, GraphQLInt, GraphQLNonNull, GraphQLString } from 'graphql';
+import { GraphQLFloat, GraphQLInt, GraphQLNonNull, GraphQLScalarType, GraphQLString, Kind } from 'graphql';
 import { tGQLInputObject } from '../src/types-builder';
+import { dateScalar, User } from './shared.ts';
 
 describe('tGQL Types', () => {
 	test('Scalar Types', () => {
@@ -48,6 +49,30 @@ describe('tGQL Types', () => {
 		expect(User.nullable()._createGraphQLType().name).toBe('User');
 
 		const UserInput = tgql.inputObject('UserInput', {});
-		expect(UserInput instanceof tGQLInputObject).toBeTruthy();
+		expect(UserInput._class).toBe('tGQLInputObject');
+	});
+	test('Object to Input Object', () => {
+		const user = User.toInput('UserInput2')
+			.extend({ age2: tgql.int() })
+			.required(['weight'])
+			.exclude(['age'])
+			.optional(['firstName'])
+			.create();
+
+		expect(Object.entries(user.fields).map(([key, field]) => [key, field._class])).toEqual([
+			['id', 'tGQLID'],
+			['firstName', 'tGQLNullable'],
+			['lastName', 'tGQLString'],
+			['weight', 'tGQLFloat'],
+			['favoriteNumbers', 'tGQLList'],
+			['birthdate', 'tGQLCustomScalar'],
+			['age2', 'tGQLInt'],
+		]);
+	});
+
+	test('Custom Scalar Types', () => {
+		const dateType = tgql.scalar(dateScalar);
+		const date: tgql.Infer<typeof dateType> = new Date();
+		expect(dateType._createGraphQLType().ofType).toBe(dateScalar);
 	});
 });

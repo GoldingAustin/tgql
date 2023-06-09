@@ -7,6 +7,7 @@ export class tGQLList<tGQLType extends tGQLBaseTypeAny> extends tGQLNonNull<
 	Infer<tGQLType>[],
 	GraphQLList<tGQLType['_graphQLType']>
 > {
+	override readonly _class = 'tGQLList' as const;
 	constructor(tGQLType: tGQLType) {
 		super({ tGQLType });
 	}

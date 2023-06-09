@@ -1,13 +1,12 @@
 import { GraphQLNonNull, GraphQLType as GraphQLTypes } from 'graphql';
-import { tGQLNullable } from './index.ts';
-import type { tGQLBaseTypeAny, GraphQLNullCheck } from '../types.ts';
+import type { GraphQLNullCheck, tGQLBaseTypeAny } from '../../types.ts';
 
 export abstract class tGQLBase<tGQLType extends tGQLBaseTypeAny, TypescriptType, GraphQLType extends GraphQLTypes> {
+	abstract readonly _class: string;
+	abstract _nullable: boolean;
 	declare _type: TypescriptType;
-	_nullable = false;
 	readonly _graphQLType!: GraphQLType;
 	readonly _tGQLType!: tGQLType;
-
 	readonly name: string | undefined;
 
 	_description: string | undefined;
@@ -35,15 +34,5 @@ export abstract class tGQLBase<tGQLType extends tGQLBaseTypeAny, TypescriptType,
 			type: graphQLType,
 			description: this._description,
 		};
-	}
-}
-
-export class tGQLNonNull<
-	tGQLType extends tGQLBaseTypeAny,
-	TypescriptType,
-	GraphQLType extends GraphQLTypes,
-> extends tGQLBase<tGQLType, TypescriptType, GraphQLNonNull<GraphQLType>> {
-	nullable(): tGQLNullable<this> {
-		return new tGQLNullable<this>(this);
 	}
 }

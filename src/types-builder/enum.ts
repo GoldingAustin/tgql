@@ -1,12 +1,14 @@
 import { GraphQLEnumType } from 'graphql';
 import type { GraphQLEnumValueConfigMap } from 'graphql/type/definition';
-import { tGQLNonNull } from './gql-type.ts';
+
+import { tGQLNonNull } from './base/non-null.ts';
 
 export class tGQLEnum<InputType extends string[] | readonly string[]> extends tGQLNonNull<
 	tGQLEnum<InputType>,
 	InputType[number],
 	GraphQLEnumType
 > {
+	override readonly _class = 'tGQLEnum' as const;
 	declare name: string;
 
 	constructor(name: string, private readonly values: InputType) {
