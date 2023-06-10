@@ -1,7 +1,7 @@
-import type { GraphQLNullCheck, Infer, tGQLBaseTypeAny } from '../../types.ts';
+import type { GraphQLNullCheck, GraphQLTypeMap, Infer, tGQLBaseTypeAny } from '../../types.ts';
 import { tGQLBase } from '../index.ts';
 
-export abstract class tGQLNullableBase<tGQLType extends tGQLBase<any, any, any>> extends tGQLBase<
+export abstract class tGQLNullableBase<tGQLType extends tGQLBase<any, any, any>,> extends tGQLBase<
 	tGQLType,
 	Infer<tGQLType> | undefined,
 	GraphQLNullCheck<tGQLType['_graphQLType']>
@@ -18,18 +18,28 @@ export abstract class tGQLNullableBase<tGQLType extends tGQLBase<any, any, any>>
 		});
 	}
 
-	override fieldConfig(nullable?: boolean): any {
-		return this._tGQLType.fieldConfig();
+	override fieldConfig(graphqlTypeMap?: GraphQLTypeMap): any {
+		return this._tGQLType.fieldConfig(graphqlTypeMap);
 	}
 
-	override _createGraphQLType<Override extends GraphQLNullCheck<tGQLType['_graphQLType']>>(
-		overrideType?: Override,
-	): GraphQLNullCheck<tGQLType['_graphQLType']> {
-		return overrideType || this._tGQLType._createGraphQLType();
+	override _createGraphQLType<Override extends GraphQLNullCheck<tGQLType['_graphQLType']>,>({
+		graphqlTypeMap,
+		overrideType,
+	}: {
+		graphqlTypeMap?: GraphQLTypeMap;
+		overrideType?: Override;
+	} = {}): GraphQLNullCheck<tGQLType['_graphQLType']> {
+		if (this.name && graphqlTypeMap && graphqlTypeMap[this.name]) {
+			return graphqlTypeMap[this.name] as GraphQLNullCheck<tGQLType['_graphQLType']>;
+		} else {
+			const type = overrideType || this._tGQLType._createGraphQLType({ graphqlTypeMap });
+			if (this.name && graphqlTypeMap) graphqlTypeMap[this.name] = type;
+			return type;
+		}
 	}
 }
 
-export class tGQLNullable<tGQLType extends tGQLBaseTypeAny> extends tGQLNullableBase<tGQLType> {
+export class tGQLNullable<tGQLType extends tGQLBaseTypeAny,> extends tGQLNullableBase<tGQLType> {
 	override readonly _class = 'tGQLNullable' as const;
 	override _nullable = true;
 
@@ -40,13 +50,16 @@ export class tGQLNullable<tGQLType extends tGQLBaseTypeAny> extends tGQLNullable
 	}
 }
 
-export class tGQLNullableWithDefault<tGQLType extends tGQLBaseTypeAny> extends tGQLNullableBase<tGQLType> {
+export class tGQLNullableWithDefault<tGQLType extends tGQLBaseTypeAny,> extends tGQLNullableBase<tGQLType> {
 	override readonly _class = 'tGQLNullableWithDefault' as const;
 	override _nullable = true;
 	declare _type: Infer<tGQLType>;
 	_defaultValue!: Infer<tGQLType>;
 
-	override fieldConfig(nullable?: boolean): any {
-		return { ...super.fieldConfig(), defaultValue: this._defaultValue };
+	override fieldConfig(graphqlTypeMap?: GraphQLTypeMap): any {
+		return {
+			...super.fieldConfig(graphqlTypeMap),
+			defaultValue: this._defaultValue,
+		};
 	}
 }

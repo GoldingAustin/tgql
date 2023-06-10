@@ -1,6 +1,6 @@
+import type { RemoveNull } from '../../types.ts';
+import { tGQLNonNull } from '../index.ts';
 import { GraphQLBoolean, GraphQLFloat, GraphQLID, GraphQLInt, GraphQLScalarType, GraphQLString } from 'graphql';
-import { tGQLNonNull } from './index.ts';
-import type { RemoveNull } from '../types.ts';
 
 export class tGQLString extends tGQLNonNull<tGQLString, string, typeof GraphQLString> {
 	override readonly _class = 'tGQLString' as const;
@@ -18,7 +18,7 @@ export class tGQLID extends tGQLNonNull<tGQLID, string, typeof GraphQLID> {
 	override readonly _class = 'tGQLID' as const;
 }
 
-export class tGQLCustomScalar<GraphQLType extends GraphQLScalarType> extends tGQLNonNull<
+export class tGQLCustomScalar<GraphQLType extends GraphQLScalarType,> extends tGQLNonNull<
 	tGQLCustomScalar<any>,
 	RemoveNull<ReturnType<GraphQLType['parseValue']>>,
 	GraphQLType

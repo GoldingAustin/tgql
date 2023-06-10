@@ -1,17 +1,19 @@
+import type { tGQLBaseTypeAny, tGQLInputTypes, tGQLObjectFieldsBase, tGQLOutputTypes } from '../types.ts';
 import {
-	tGQLEnum,
-	tGQLObject,
 	tGQLBool,
+	tGQLEnum,
 	tGQLFloat,
 	tGQLID,
-	tGQLInt,
-	tGQLString,
-	tGQLList,
 	tGQLInputObject,
+	tGQLInt,
+	tGQLInterface,
+	tGQLList,
+	tGQLObject,
+	tGQLString,
 } from './index.ts';
+import { tGQLCustomScalar } from './tgql-types/scalars.ts';
+import { tGQLUnion } from './tgql-types/union.ts';
 import { GraphQLBoolean, GraphQLFloat, GraphQLID, GraphQLInt, GraphQLScalarType, GraphQLString } from 'graphql';
-import type { tGQLBaseTypeAny, tGQLInputTypes, tGQLObjectFieldsBase, tGQLOutputTypes } from '../types.ts';
-import { tGQLCustomScalar } from './scalars.ts';
 
 export function id(): tGQLID {
 	return new tGQLID({ graphQLType: GraphQLID });
@@ -49,6 +51,14 @@ export function object<T extends tGQLObjectFieldsBase<tGQLOutputTypes>>(name: st
 	return new tGQLObject<T>(name, fields);
 }
 
+function interface_<T extends tGQLObjectFieldsBase<tGQLOutputTypes>>(name: string, fields: T): tGQLInterface<T> {
+	return new tGQLInterface<T>(name, fields);
+}
+
+export function union<T extends tGQLObject<any>[]>(name: string, types: T): tGQLUnion<T> {
+	return new tGQLUnion<T>(name, types);
+}
+
 export function inputObject<T extends tGQLObjectFieldsBase<tGQLInputTypes>>(
 	name: string,
 	fields: T,
@@ -56,4 +66,4 @@ export function inputObject<T extends tGQLObjectFieldsBase<tGQLInputTypes>>(
 	return new tGQLInputObject(name, fields);
 }
 
-export { enum_ as enum };
+export { enum_ as enum, interface_ as interface };

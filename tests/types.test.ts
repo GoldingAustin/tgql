@@ -75,4 +75,56 @@ describe('tGQL Types', () => {
 		const date: tgql.Infer<typeof dateType> = new Date();
 		expect(dateType._createGraphQLType().ofType).toBe(dateScalar);
 	});
+
+	test('Interface Types', () => {
+		const Node = tgql.interface('Node', {
+			id: tgql.id(),
+		});
+
+		const Vehicle = tgql.interface('Vehicle', {
+			color: tgql.string(),
+			brand: tgql.string(),
+		});
+
+		const ElectricCar = Vehicle.implement('ElectricCar', {
+			batteryCapacity: tgql.float(),
+		});
+
+		expect(ElectricCar.fields.brand._class).toBe('tGQLString');
+		expect(ElectricCar.fields.batteryCapacity._class).toBe('tGQLFloat');
+
+		const GasCar = tgql
+			.object('GasCar', {
+				tankCapacity: tgql.float(),
+			})
+			.extends(Node)
+			.extends(Vehicle);
+
+		expect(GasCar.fields.brand._class).toBe('tGQLString');
+		expect(GasCar.fields.id._class).toBe('tGQLID');
+	});
+
+	test('Union Types', () => {
+		const Vehicle = tgql.interface('Vehicle', {
+			color: tgql.string(),
+			brand: tgql.string(),
+		});
+
+		const ElectricCar = Vehicle.implement('ElectricCar', {
+			batteryCapacity: tgql.float(),
+		});
+
+		const GasCar = Vehicle.implement('GasCar', {
+			tankCapacity: tgql.float(),
+		});
+
+		const Cars = tgql.union('Cars', [ElectricCar, GasCar]);
+
+		expect(Cars._createGraphQLType({}).ofType.name).toBe('Cars');
+		expect(
+			Cars._createGraphQLType({})
+				.ofType.getTypes()
+				.map((t) => t.name),
+		).toEqual(['ElectricCar', 'GasCar']);
+	});
 });

@@ -5,6 +5,9 @@
 			"quoteStyle": "single"
 		}
 	},
+	"organizeImports": {
+		"enabled": true
+	},
 	"formatter": {
 		"enabled": true,
 		"indentStyle": "tab",
@@ -13,6 +16,9 @@
 	"linter": {
 		"enabled": true,
 		"rules": {
+			"correctness": {
+				"noUnusedVariables": "error"
+			},
 			"suspicious": {
 				"noExplicitAny": "off"
 			}

@@ -14,7 +14,6 @@
     "allowImportingTsExtensions": true,
     "moduleDetection": "force",
     "noErrorTruncation": true,
-    "exactOptionalPropertyTypes": true,
 
     "allowJs": true, // allow importing `.js` from `.ts`
     "esModuleInterop": true, // allow default imports for CommonJS modules

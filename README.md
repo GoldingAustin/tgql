@@ -83,16 +83,16 @@ const schema = resolvers.createSchema();
 - [x] basic schema builder
 - [x] Add support for custom scalars
 - [x] Add object to input object utility
+- [x] Add support for unions
+- [x] Add support for interfaces
 
 ## TODO
 
-- [ ] Better error handling
-- [ ] Add support for directives
-- [ ] Improved resolvers system
-- [ ] Update middleware implementation
 - [ ] More documentation & tests
 - [ ] Create client methods for tGQL
 - [ ] Add support for subscriptions
 - [ ] Add support for fragments
-- [ ] Add support for unions
-- [ ] Add support for interfaces
+- [ ] Better error handling
+- [ ] Add support for directives
+- [ ] Improved resolvers system
+- [ ] Update middleware implementation

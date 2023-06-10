@@ -1,5 +1,5 @@
-import type { tGQLObject, tGQLNullable, tGQLFieldResolver } from '../types-builder/index.ts';
-import type { Expand, Infer, tGQLBaseTypeAny, tGQLInputTypes, tGQLOutputTypes, UndefinedAsOptional } from '../types.ts';
+import type { tGQLFieldResolver, tGQLNullable, tGQLObject } from '../types-builder/index.ts';
+import type { Expand, Infer, UndefinedAsOptional, tGQLBaseTypeAny, tGQLInputTypes, tGQLOutputTypes } from '../types.ts';
 import type { GraphQLResolveInfo } from 'graphql';
 
 export type ArgsInput = Record<string, tGQLInputTypes>;

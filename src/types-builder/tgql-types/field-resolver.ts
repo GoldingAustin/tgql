@@ -1,8 +1,7 @@
-import type { GraphQLOutputType } from 'graphql';
-import { tGQLNonNull } from './index.ts';
-import type { Infer, tGQLOutputTypes } from '../types.ts';
-import type { ArgsInput, InferArgs } from '../schema-builder/types.ts';
-import type { tGQLBaseTypeAny } from '../types.ts';
+import type { ArgsInput, InferArgs } from '../../schema-builder/types.ts';
+import type { GraphQLTypeMap, Infer, tGQLBaseTypeAny, tGQLOutputTypes } from '../../types.ts';
+import { tGQLNonNull } from '../index.ts';
+import type { GraphQLFieldConfig, GraphQLFieldConfigArgumentMap, GraphQLOutputType } from 'graphql';
 
 export class tGQLFieldResolver<
 	tGQLType extends tGQLOutputTypes,
@@ -17,19 +16,21 @@ export class tGQLFieldResolver<
 		this._args = args;
 	}
 
-	override fieldConfig(): any {
+	override fieldConfig(graphqlTypeMap?: GraphQLTypeMap): Partial<GraphQLFieldConfig<any, any>> {
 		return {
-			type: this._tGQLType.fieldConfig().type,
+			type: this._tGQLType.fieldConfig(graphqlTypeMap).type,
 			resolve: this.resolver,
-			args: this._args
-				? Object.fromEntries(Object.entries(this._args).map(([key, tGQLType]) => [key, tGQLType.fieldConfig()]))
-				: undefined,
+			args: (this._args
+				? Object.fromEntries(
+						Object.entries(this._args).map(([key, tGQLType]) => [key, tGQLType.fieldConfig(graphqlTypeMap)]),
+				  )
+				: undefined) as GraphQLFieldConfigArgumentMap,
 			description: this._description,
 		};
 	}
 }
 
-export class FieldResolverBuilder<tGQLType extends tGQLBaseTypeAny> extends tGQLNonNull<
+export class FieldResolverBuilder<tGQLType extends tGQLBaseTypeAny,> extends tGQLNonNull<
 	tGQLType,
 	Infer<tGQLType> | undefined,
 	tGQLType['_graphQLType']['ofType']

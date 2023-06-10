@@ -1,9 +1,9 @@
+import type { GraphQLTypeMap } from '../../types.ts';
+import { tGQLNonNull } from '../index.ts';
 import { GraphQLEnumType } from 'graphql';
-import type { GraphQLEnumValueConfigMap } from 'graphql/type/definition';
+import type { GraphQLEnumValueConfigMap } from 'graphql';
 
-import { tGQLNonNull } from './base/non-null.ts';
-
-export class tGQLEnum<InputType extends string[] | readonly string[]> extends tGQLNonNull<
+export class tGQLEnum<InputType extends string[] | readonly string[],> extends tGQLNonNull<
 	tGQLEnum<InputType>,
 	InputType[number],
 	GraphQLEnumType
@@ -23,13 +23,14 @@ export class tGQLEnum<InputType extends string[] | readonly string[]> extends tG
 		return values;
 	}
 
-	override _createGraphQLType() {
-		return super._createGraphQLType(
-			new GraphQLEnumType({
+	override _createGraphQLType({ graphqlTypeMap }: { graphqlTypeMap?: GraphQLTypeMap } = {}) {
+		return super._createGraphQLType({
+			graphqlTypeMap,
+			overrideType: new GraphQLEnumType({
 				name: this.name,
 				values: this.valuesMap,
 				description: this._description,
 			}),
-		);
+		});
 	}
 }

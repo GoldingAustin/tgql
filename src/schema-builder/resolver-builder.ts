@@ -1,13 +1,7 @@
-import {
-	GraphQLFieldConfig,
-	GraphQLFieldConfigArgumentMap,
-	GraphQLFieldConfigMap,
-	GraphQLInputFieldMap,
-	GraphQLFieldResolver,
-} from 'graphql';
 import type { tGQLObject } from '../types-builder/index.ts';
+import type { GraphQLTypeMap, tGQLOutputTypes } from '../types.ts';
 import type { ArgsInput, InferArgs, InferResolverReturn, Middleware, Resolver } from './types.ts';
-import type { tGQLOutputTypes } from '../types.ts';
+import { GraphQLFieldConfig, GraphQLFieldConfigArgumentMap, GraphQLFieldResolver } from 'graphql';
 
 export class ResolverBuilder<
 	TContext,
@@ -52,26 +46,20 @@ export class ResolverBuilder<
 		return this as unknown as ResolverBuilder<TContext, TSource, Args, TResult>;
 	}
 
-	private graphqlArgMap(graphqlInputTypeMap: GraphQLInputFieldMap): GraphQLFieldConfigArgumentMap {
+	private graphqlArgMap(graphqlInputTypeMap: GraphQLTypeMap): GraphQLFieldConfigArgumentMap {
 		const builtArgs: GraphQLFieldConfigArgumentMap = {};
 		if (this._args) {
 			for (const [key, gqlType] of Object.entries(this._args)) {
-				if (!graphqlInputTypeMap[key]) {
-					graphqlInputTypeMap[key] = gqlType.fieldConfig();
-				}
-				builtArgs[key] = graphqlInputTypeMap[key];
+				builtArgs[key] = gqlType.fieldConfig(graphqlInputTypeMap);
 			}
 		}
 		return builtArgs;
 	}
 
-	private returnType(gqlTypeMap: Record<string, GraphQLFieldConfig<any, any>>): GraphQLFieldConfig<any, any> {
+	private returnType(gqlTypeMap: GraphQLTypeMap): GraphQLFieldConfig<any, any> {
 		let returnType: GraphQLFieldConfig<any, any> | undefined;
 		if (this._returns?.name) {
-			if (!gqlTypeMap[this._returns.name]) {
-				gqlTypeMap[this._returns.name] = this._returns.fieldConfig() as GraphQLFieldConfig<any, any>;
-			}
-			returnType = gqlTypeMap[this._returns.name];
+			returnType = this._returns.fieldConfig(gqlTypeMap) as GraphQLFieldConfig<any, any>;
 		} else {
 			throw new Error(`No return type specified for resolver ${this._name}`);
 		}
@@ -97,8 +85,8 @@ export class ResolverBuilder<
 	}
 
 	build(
-		gqlTypeMap: GraphQLFieldConfigMap<any, any>,
-		graphqlInputTypeMap: GraphQLInputFieldMap,
+		gqlTypeMap: GraphQLTypeMap,
+		graphqlInputTypeMap: GraphQLTypeMap,
 		globalMiddleware: Middleware<any, any, any, any>[] = [],
 	): GraphQLFieldConfig<TSource, TContext, InferArgs<TArgs>> {
 		return {

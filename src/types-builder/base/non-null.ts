@@ -1,7 +1,6 @@
-import type { GraphQLType as GraphQLTypes } from 'graphql/type';
-import { GraphQLNonNull } from 'graphql';
-import { tGQLBase, tGQLNullable } from '../index.ts';
 import type { tGQLBaseTypeAny } from '../../types.ts';
+import { tGQLBase, tGQLNullable } from '../index.ts';
+import type { GraphQLNonNull, GraphQLType as GraphQLTypes } from 'graphql';
 
 export abstract class tGQLNonNull<
 	tGQLType extends tGQLBaseTypeAny,
