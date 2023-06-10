@@ -1,3 +1,6 @@
+[![Tree shaking support][badge-tree-shaking]][link-bundlephobia]
+[![Compressed package size][badge-size]][link-bundlephobia]
+
 # tGQL
 
 ## Description
@@ -96,3 +99,8 @@ const schema = resolvers.createSchema();
 - [ ] Add support for directives
 - [ ] Improved resolvers system
 - [ ] Update middleware implementation
+
+
+[badge-size]: https://badgen.net/bundlephobia/minzip/tgql
+[badge-tree-shaking]: https://badgen.net/bundlephobia/tree-shaking/tgql
+[link-bundlephobia]: https://bundlephobia.com/package/tgql
