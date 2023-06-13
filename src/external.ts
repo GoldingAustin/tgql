@@ -1,5 +1,5 @@
 export * from './types-builder/index.ts';
-export { SchemaBuilder } from './schema-builder/schema-builder.ts';
+export * from './schema-builder/resolvers.ts';
 export type {
 	InferResolverReturn,
 	Middleware,

@@ -15,9 +15,9 @@ describe('tGQL Resolvers', () => {
 	});
 
 	test('basic', async () => {
-		const resolvers = new tgql.SchemaBuilder<{ currentUser: string }>();
-		resolvers
-			.query('user')
+		type Context = { currentUser: string };
+		const user = tgql
+			.query<Context>()
 			.returns(User)
 			.args({ id: tgql.id() })
 			.resolver(async ({ args: { id }, context }) => {
@@ -32,7 +32,7 @@ describe('tGQL Resolvers', () => {
 				};
 			});
 
-		const schema = resolvers.createSchema();
+		const schema = tgql.createSchema({ user });
 		expect(schema).toBeDefined();
 		expect(printSchema(schema)).toMatch(expectedSchema);
 
@@ -62,10 +62,8 @@ describe('tGQL Resolvers', () => {
 	});
 
 	test('mutation', () => {
-		const resolvers = new tgql.SchemaBuilder();
-
-		resolvers
-			.mutation('createUser')
+		tgql
+			.mutation()
 			.returns(User)
 			.args({ user: UserInput })
 			.resolver(async ({ args: { user } }) => {
@@ -83,12 +81,11 @@ describe('tGQL Resolvers', () => {
 
 	test('simple middleware', async () => {
 		type Context = { currentUser: string };
-		const resolvers = new tgql.SchemaBuilder<Context>();
 		const simpleMiddleware: tgql.Middleware<Context, any, any, any> = async ({ context }) => {
 			expect(context.currentUser).toMatch('Bob 2');
 		};
-		resolvers
-			.query('user')
+		const user = tgql
+			.query<Context>()
 			.returns(User)
 			.args({ id: tgql.id() })
 			.middleware(simpleMiddleware)
@@ -103,7 +100,7 @@ describe('tGQL Resolvers', () => {
 				};
 			});
 
-		const schema = resolvers.createSchema();
+		const schema = tgql.createSchema({ user });
 		await graphql({
 			schema,
 			source: `query ExampleQuery {

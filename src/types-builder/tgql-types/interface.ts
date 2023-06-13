@@ -1,4 +1,10 @@
-import type { Expand, GraphQLTypeMap, UndefinedAsOptional, tGQLObjectFieldsBase, tGQLOutputTypes } from '../../types.ts';
+import type {
+	Expand,
+	GraphQLTypeMap,
+	UndefinedAsOptional,
+	tGQLObjectFieldsBase,
+	tGQLOutputTypes,
+} from '../../types.ts';
 import { tGQLNonNull } from '../index.ts';
 import { tGQLObject } from './object.ts';
 import type { GraphQLFieldConfig, GraphQLFieldConfigMap } from 'graphql';

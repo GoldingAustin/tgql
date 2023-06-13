@@ -1,27 +1,14 @@
-import type { tGQLObject } from '../types-builder';
 import { GraphQLTypeMap } from '../types.ts';
-import { ResolverBuilder } from './resolver-builder.ts';
+import { ResolverMap, ResolverType } from './types.ts';
 import { GraphQLObjectType } from 'graphql';
 import { GraphQLSchema } from 'graphql';
 
-export class SchemaBuilder<TContext> {
-	private queries: Record<string, ResolverBuilder<TContext, any, any, any>> = {};
-	private mutations: Record<string, ResolverBuilder<TContext, any, any, any>> = {};
+export class SchemaBuilder {
 	private graphqlTypeMap: GraphQLTypeMap = {};
 	private graphqlInputTypeMap: GraphQLTypeMap = {};
 
-	query<TSource extends tGQLObject<any>>(name: string): ResolverBuilder<TContext, TSource, any, any> {
-		this.queries[name] = new ResolverBuilder<TContext, TSource, any, any>(name);
-		return this.queries[name];
-	}
-
-	mutation<TSource extends tGQLObject<any>>(name: string): ResolverBuilder<TContext, TSource, any, any> {
-		this.mutations[name] = new ResolverBuilder<TContext, TSource, any, any>(name);
-		return this.mutations[name];
-	}
-
-	private createResolverMap(name: 'Query' | 'Mutation') {
-		const entries = Object.entries(name === 'Query' ? this.queries : this.mutations);
+	private createResolverMap(name: ResolverType, resolvers: ResolverMap<ResolverType>) {
+		const entries = Object.entries(resolvers);
 		if (entries.length) {
 			return new GraphQLObjectType({
 				name,
@@ -32,13 +19,22 @@ export class SchemaBuilder<TContext> {
 		}
 	}
 
-	public createSchema(): GraphQLSchema {
+	public createSchema<Resolvers extends ResolverMap<ResolverType>>(resolvers: Resolvers): GraphQLSchema {
+		const queries: ResolverMap<ResolverType> = {};
+		const mutations: ResolverMap<ResolverType> = {};
+		for (const [key, builder] of Object.entries(resolvers)) {
+			if (builder.type === 'Query') {
+				queries[key] = builder;
+			} else if (builder.type === 'Mutation') {
+				mutations[key] = builder;
+			}
+		}
 		const gqlResolvers: {
 			query: GraphQLObjectType | undefined;
 			mutation?: GraphQLObjectType | undefined;
 		} = {
-			query: this.createResolverMap('Query'),
-			mutation: this.createResolverMap('Mutation'),
+			query: this.createResolverMap('Query', queries),
+			mutation: this.createResolverMap('Mutation', mutations),
 		};
 		return new GraphQLSchema(gqlResolvers);
 	}

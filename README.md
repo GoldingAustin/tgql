@@ -52,10 +52,8 @@ type UserType = tgql.Infer<typeof User>;
 
 ### Define queries
 ```typescript
-const resolvers = new tgql.SchemaBuilder<{ currentUser: string }>();
 
-resolvers
-	.query('user')
+const user = tgql.query<{ currentUser: string }>()
 	.returns(User)
 	.args({ id: tgql.id() })
 	.resolver(async ({ args: { id }, context }) => {
@@ -68,7 +66,7 @@ resolvers
 		};
 	});
 
-const schema = resolvers.createSchema();
+const schema = tgql.createSchema({user});
 ```
 
 ## Progress
@@ -97,7 +95,7 @@ const schema = resolvers.createSchema();
 - [ ] Add support for fragments
 - [ ] Better error handling
 - [ ] Add support for directives
-- [ ] Improved resolvers system
+- [x] Improved resolvers system
 - [ ] Update middleware implementation
 
 

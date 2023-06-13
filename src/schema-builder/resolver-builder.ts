@@ -1,6 +1,6 @@
 import type { tGQLObject } from '../types-builder/index.ts';
 import type { GraphQLTypeMap, tGQLOutputTypes } from '../types.ts';
-import type { ArgsInput, InferArgs, InferResolverReturn, Middleware, Resolver } from './types.ts';
+import type { ArgsInput, InferArgs, InferResolverReturn, Middleware, Resolver, ResolverType } from './types.ts';
 import { GraphQLFieldConfig, GraphQLFieldConfigArgumentMap, GraphQLFieldResolver } from 'graphql';
 
 export class ResolverBuilder<
@@ -8,16 +8,28 @@ export class ResolverBuilder<
 	TSource extends tGQLObject<any>,
 	TArgs extends ArgsInput,
 	TResult extends tGQLOutputTypes,
+	Type extends ResolverType,
 > {
-	private readonly _name: string;
+	private _name: string | undefined;
+
+	private _description: string | undefined;
+	private _deprecationReason: string | undefined;
 	private _returns: TResult | undefined;
 	private _args: TArgs | undefined;
 
 	private _resolver?: Resolver<TContext, TSource, TArgs, TResult>;
 	private _middleware: Middleware<TContext, TResult, TArgs, TSource>[] = [];
 
-	constructor(name: string) {
-		this._name = name;
+	constructor(readonly type: Type) {}
+
+	public description(description: string): this {
+		this._description = description;
+		return this;
+	}
+
+	public deprecated(reason: string): this {
+		this._deprecationReason = reason;
+		return this;
 	}
 
 	public middleware(
@@ -29,21 +41,21 @@ export class ResolverBuilder<
 
 	public resolver<Source extends TSource>(
 		resolverFn: Resolver<TContext, Source, TArgs, TResult>,
-	): ResolverBuilder<TContext, Source, TArgs, TResult> {
+	): ResolverBuilder<TContext, Source, TArgs, TResult, Type> {
 		this._resolver = resolverFn;
-		return this as ResolverBuilder<TContext, Source, TArgs, TResult>;
+		return this as ResolverBuilder<TContext, Source, TArgs, TResult, Type>;
 	}
 
 	public returns<Result extends tGQLOutputTypes>(
 		returnType: Result,
-	): ResolverBuilder<TContext, TSource, TArgs, Result> {
+	): ResolverBuilder<TContext, TSource, TArgs, Result, Type> {
 		this._returns = returnType as any;
-		return this as unknown as ResolverBuilder<TContext, TSource, TArgs, Result>;
+		return this as unknown as ResolverBuilder<TContext, TSource, TArgs, Result, Type>;
 	}
 
-	public args<Args extends TArgs>(args: Args): ResolverBuilder<TContext, TSource, Args, TResult> {
+	public args<Args extends TArgs>(args: Args): ResolverBuilder<TContext, TSource, Args, TResult, Type> {
 		this._args = args;
-		return this as unknown as ResolverBuilder<TContext, TSource, Args, TResult>;
+		return this as unknown as ResolverBuilder<TContext, TSource, Args, TResult, Type>;
 	}
 
 	private graphqlArgMap(graphqlInputTypeMap: GraphQLTypeMap): GraphQLFieldConfigArgumentMap {
@@ -93,6 +105,8 @@ export class ResolverBuilder<
 			type: this.returnType(gqlTypeMap).type,
 			args: this.graphqlArgMap(graphqlInputTypeMap),
 			resolve: this.createResolverFn(globalMiddleware),
+			description: this._description,
+			deprecationReason: this._deprecationReason,
 		};
 	}
 }

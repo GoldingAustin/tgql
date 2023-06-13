@@ -9,12 +9,18 @@ export abstract class tGQLBase<tGQLType extends tGQLBaseTypeAny, TypescriptType,
 	readonly _tGQLType!: tGQLType;
 	readonly name: string | undefined;
 
+	_deprecationReason: string | undefined;
 	_description: string | undefined;
 
 	constructor({ tGQLType, graphQLType, name }: { tGQLType?: tGQLType; graphQLType?: GraphQLTypes; name?: string }) {
 		if (tGQLType) this._tGQLType = tGQLType;
 		if (graphQLType) this._graphQLType = graphQLType as GraphQLType;
 		this.name = name;
+	}
+
+	deprecated(reason: string): this {
+		this._deprecationReason = reason;
+		return this;
 	}
 
 	description(description: string): this {
@@ -45,6 +51,7 @@ export abstract class tGQLBase<tGQLType extends tGQLBaseTypeAny, TypescriptType,
 		return {
 			type: graphQLType,
 			description: this._description,
+			deprecationReason: this._deprecationReason,
 		};
 	}
 }

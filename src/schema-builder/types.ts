@@ -1,5 +1,6 @@
 import type { tGQLFieldResolver, tGQLNullable, tGQLObject } from '../types-builder/index.ts';
 import type { Expand, Infer, UndefinedAsOptional, tGQLBaseTypeAny, tGQLInputTypes, tGQLOutputTypes } from '../types.ts';
+import type { ResolverBuilder } from './resolver-builder.ts';
 import type { GraphQLResolveInfo } from 'graphql';
 
 export type ArgsInput = Record<string, tGQLInputTypes>;
@@ -12,6 +13,11 @@ export type ResolverReturnType<T extends Record<string, tGQLBaseTypeAny>> = Expa
 export type InferResolverReturn<T extends tGQLOutputTypes> = T extends tGQLObject<infer R>
 	? ResolverReturnType<R>
 	: Infer<T>;
+
+export type ResolverType = 'Query' | 'Mutation';
+
+export type ResolverMap<Type extends ResolverType> = Record<string, ResolverBuilder<any, any, any, any, Type>>;
+
 export type Resolver<
 	TContext,
 	TSource extends tGQLObject<any>,
