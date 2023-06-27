@@ -6,7 +6,7 @@ import { toInputObject } from './input-object.ts';
 import { tGQLInterface } from './interface.ts';
 import { GraphQLFieldConfig, GraphQLFieldConfigMap, GraphQLObjectType } from 'graphql';
 
-export class tGQLObject<Fields extends tGQLObjectFieldsBase<tGQLOutputTypes>,> extends tGQLNonNull<
+export class tGQLObject<Fields extends tGQLObjectFieldsBase<tGQLOutputTypes>> extends tGQLNonNull<
 	tGQLObject<Fields>,
 	Expand<UndefinedAsOptional<Fields>>,
 	GraphQLObjectType

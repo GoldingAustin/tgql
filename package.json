@@ -9,7 +9,7 @@
     "url": "https://github.com/GoldingAustin/tgql"
   },
   "license": "MIT",
-  "version": "0.0.1-alpha.2",
+  "version": "0.0.1-alpha.3",
   "main": "./build/index.js",
   "types": "./src/index.ts",
   "module": "./build/index.js",

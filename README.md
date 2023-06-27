@@ -66,7 +66,7 @@ const user = tgql.query<{ currentUser: string }>()
 		};
 	});
 
-const schema = tgql.createSchema({user});
+const schema = tgql.registerResolvers({user}).createSchema();
 ```
 
 ## Progress

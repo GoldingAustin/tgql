@@ -49,7 +49,7 @@ export type GraphQLTypeMap = Record<string, GraphQLTypes>;
 export type Infer<T extends tGQLBaseTypeAny> = T['_type'];
 
 export type Expand<T> = T extends infer U ? { [K in keyof U]: U[K] } : never;
-export type tGQLObjectFieldsBase<Type extends tGQLBaseTypeAny = tGQLBaseTypeAny,> = Record<string, Type>;
+export type tGQLObjectFieldsBase<Type extends tGQLBaseTypeAny = tGQLBaseTypeAny> = Record<string, Type>;
 export type GraphQLNullCheck<GraphQLType extends GraphQLTypes> = GraphQLType extends GraphQLNonNull<infer R>
 	? R
 	: GraphQLType;

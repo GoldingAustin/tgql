@@ -1,8 +1,7 @@
 import { tGQLObject } from '../types-builder';
 import { ResolverBuilder } from './resolver-builder.ts';
 import { SchemaBuilder } from './schema-builder.ts';
-import { ResolverMap, ResolverType } from './types.ts';
-import { GraphQLSchema } from 'graphql/index';
+import type { ResolverMap, ResolverType } from './types.ts';
 
 export function query<TContext, TSource extends tGQLObject<any> = tGQLObject<any>>(): ResolverBuilder<
 	TContext,
@@ -24,6 +23,8 @@ export function mutation<TContext, TSource extends tGQLObject<any> = tGQLObject<
 	return new ResolverBuilder('Mutation');
 }
 
-export function createSchema<Resolvers extends ResolverMap<ResolverType>>(resolvers: Resolvers): GraphQLSchema {
-	return new SchemaBuilder().createSchema(resolvers);
+export function registerResolvers<Resolvers extends ResolverMap<ResolverType>>(
+	resolvers: Resolvers,
+): SchemaBuilder<Resolvers> {
+	return new SchemaBuilder(resolvers);
 }

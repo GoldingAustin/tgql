@@ -14,8 +14,8 @@ export class ResolverBuilder<
 
 	private _description: string | undefined;
 	private _deprecationReason: string | undefined;
-	private _returns: TResult | undefined;
-	private _args: TArgs | undefined;
+	_returns: TResult | undefined;
+	_args: TArgs | undefined;
 
 	private _resolver?: Resolver<TContext, TSource, TArgs, TResult>;
 	private _middleware: Middleware<TContext, TResult, TArgs, TSource>[] = [];

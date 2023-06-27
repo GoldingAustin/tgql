@@ -32,7 +32,7 @@ describe('tGQL Resolvers', () => {
 				};
 			});
 
-		const schema = tgql.createSchema({ user });
+		const schema = tgql.registerResolvers({ user }).createSchema();
 		expect(schema).toBeDefined();
 		expect(printSchema(schema)).toMatch(expectedSchema);
 
@@ -100,7 +100,7 @@ describe('tGQL Resolvers', () => {
 				};
 			});
 
-		const schema = tgql.createSchema({ user });
+		const schema = tgql.registerResolvers({ user }).createSchema();
 		await graphql({
 			schema,
 			source: `query ExampleQuery {
