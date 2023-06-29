@@ -72,6 +72,8 @@ export class ResolverBuilder<
 		let returnType: GraphQLFieldConfig<any, any> | undefined;
 		if (this._returns?.name) {
 			returnType = this._returns.fieldConfig(gqlTypeMap) as GraphQLFieldConfig<any, any>;
+		} else if(this._returns?._class === "tGQLList" && this._returns._tGQLType?.name) {
+			returnType = this._returns.fieldConfig(gqlTypeMap) as GraphQLFieldConfig<any, any>;
 		} else {
 			throw new Error(`No return type specified for resolver ${this._name}`);
 		}
