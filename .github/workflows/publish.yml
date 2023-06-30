@@ -18,17 +18,6 @@ jobs:
           registry-url: 'https://registry.npmjs.org'
 
       - name: Publish packages
-        run: |
-          for dir in ./packages/*; 			        # For every item in the packages folder:
-          	do ( 
-          		if [ -d "$dir" ]; 			        # If it is a directory:			
-          			then (
-                        cd "$dir" &&                # Go into the directory 
-          				bun run build &&            # Build the package
-                        npm publish --access public # Publish the package
-          			);
-          		fi
-          	); 
-          done
+        run: bun run publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
