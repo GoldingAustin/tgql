@@ -1,0 +1,27 @@
+name: Publish Package to npmjs
+on:
+  release:
+    types: [published]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: ./.github/actions/setup
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '18.x'
+          registry-url: 'https://registry.npmjs.org'
+      - run: |
+          for dir in ./packages/*; 			        # For every item in the packages folder:
+          	do ( 
+          		if [ -d "$dir" ]; 			        # If it is a directory:			
+          			then (
+                        cd "$dir" &&                # Go into the directory 
+          				bun run build &&            # Build the package
+                        npm publish --access public # Publish the package
+          			);
+          		fi
+          	); 
+          done
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
