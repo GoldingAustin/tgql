@@ -8,6 +8,11 @@
 		"type": "git",
 		"url": "https://github.com/GoldingAustin/tgql"
 	},
+	"contributors": [
+		{
+			"name": "Devan Farrell"
+		}
+	],
 	"workspaces": [
 		"packages/*"
 	],
