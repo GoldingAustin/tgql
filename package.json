@@ -20,10 +20,8 @@
 	"version": "0.0.1",
 	"sideEffects": false,
 	"scripts": {
-		"build:server": "cd packages/server && bun run build",
-		"build:client": "cd packages/client && bun run build",
-		"build:core": "cd packages/tgql && bun run build",
-		"build": "bun build:server && bun build:client && bun build:core",
+		"build": "lerna run build",
+		"publish": "lerna publish from-package",
 		"test": "bun test",
 		"format": "prettier --write . --ignore-path .gitignore",
 		"lint": "eslint --fix ./packages --ignore-path .gitignore",
@@ -33,16 +31,17 @@
 		"graphql": "^16"
 	},
 	"devDependencies": {
-		"typescript": "^5.1.3",
-		"tsup": "^7.1.0",
-		"graphql": "^16.7.1",
-		"bun-types": "^0.6.11",
-		"prettier": "^2.8.8",
-		"eslint": "^8.43.0",
-		"@typescript-eslint/parser": "^5.60.1",
 		"@typescript-eslint/eslint-plugin": "^5.60.1",
+		"@typescript-eslint/parser": "^5.60.1",
+		"bun-types": "^0.6.11",
+		"eslint": "^8.43.0",
+		"eslint-config-prettier": "^8.8.0",
 		"eslint-plugin-import": "^2.27.5",
-		"eslint-config-prettier": "^8.8.0"
+		"graphql": "^16.7.1",
+		"lerna": "^7.1.1",
+		"prettier": "^2.8.8",
+		"tsup": "^7.1.0",
+		"typescript": "^5.1.3"
 	},
 	"prettier": {
 		"printWidth": 120,
@@ -67,5 +66,45 @@
 			"@typescript-eslint/no-explicit-any": 0
 		},
 		"root": true
+	},
+	"nx": {
+		"affected": {
+			"defaultBase": "main"
+		},
+		"namedInputs": {
+			"source": [
+				"{projectRoot}/src/**/*",
+				"{projectRoot}/tsconfig.json",
+				"{projectRoot}/package.json"
+			]
+		},
+		"tasksRunnerOptions": {
+			"default": {
+				"runner": "nx/tasks-runners/default",
+				"options": {
+					"cacheableOperations": [
+						"build",
+						"test"
+					]
+				}
+			}
+		},
+		"workspaceLayout": {
+			"libsDir": "packages"
+		},
+		"targetDefaults": {
+			"build": {
+				"dependsOn": [
+					"^build"
+				],
+				"inputs": [
+					"source",
+					"^source"
+				],
+				"outputs": [
+					"{projectRoot}/dist"
+				]
+			}
+		}
 	}
 }
