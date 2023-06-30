@@ -7,6 +7,8 @@ runs:
       uses: oven-sh/setup-bun@v1
       with:
         bun-version: latest
+      shell: bash
 
     - name: Install Dependencies
       run: bun install
+      shell: bash
