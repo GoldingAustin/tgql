@@ -26,7 +26,7 @@ const User = tgql
 		lastName: tgql.string(),
 		age: tgql.int().description('Age in years'),
 		weight: tgql.float().nullable(),
-		favoriteFoods: tgql.array(Food).nullable(),
+		favoriteFoods: tgql.list(Food).nullable(),
 	})
 	.fieldResolvers((builder) => ({
 		fullName: builder.fieldResolver(tgql.string(), (user) => `${user.firstName} ${user.lastName}`),

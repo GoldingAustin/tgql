@@ -32,21 +32,43 @@ describe('tGQL Resolvers', () => {
 				};
 			});
 
-		const schema = tgql.registerResolvers({ user }).createSchema();
+		const users = tgql
+		.query<Context>()
+		.returns(tgql.list(User))
+		.resolver(async () => {
+			return [{
+				id: "10",
+				firstName: 'first',
+				lastName: 'last',
+				age: 10,
+				birthdate,
+				favoriteNumbers: [1, 2],
+			}];
+		});
+
+		const schema = tgql.registerResolvers({ user, users }).createSchema();
 		expect(schema).toBeDefined();
 		expect(printSchema(schema)).toMatch(expectedSchema);
 
 		const result = await graphql({
 			schema,
-			source: `query ExampleQuery {
-								user(id: "10") {
-									id
-									favoriteNumbers
-									weight
-									birthdate
-									fullMiddleName(middle: "middle")
-								}
-							}`,
+			source: `
+				fragment PartialUser on User {
+					id
+					favoriteNumbers
+					weight
+					birthdate
+					fullMiddleName(middle: "middle")
+				}
+			
+				query ExampleQuery {
+					user(id: "10") {
+						...PartialUser
+					}
+					users {
+						...PartialUser
+					}
+				}`,
 			contextValue: { currentUser: 'Bob 2' },
 		});
 
@@ -58,6 +80,13 @@ describe('tGQL Resolvers', () => {
 				birthdate: birthdate.getTime(),
 				fullMiddleName: 'first last middle',
 			},
+			users: [{
+				id: '10',
+				favoriteNumbers: [1, 2],
+				weight: null,
+				birthdate: birthdate.getTime(),
+				fullMiddleName: 'first last middle',
+			}]
 		});
 	});
 
@@ -118,6 +147,7 @@ describe('tGQL Resolvers', () => {
 
 const expectedSchema = `type Query {
   user(id: ID!): User!
+  users: [User!]!
 }
 
 type User {
