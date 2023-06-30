@@ -6,14 +6,6 @@ import { User } from './shared.ts';
 describe('tGQL Resolvers', () => {
 	const birthdate = new Date('2020-01-01');
 
-	const UserInput = tgql.inputObject('UserInput', {
-		firstName: tgql.string().nullable().defaultValue('Bob'),
-		lastName: tgql.string(),
-		age: tgql.int(),
-		isCool: tgql.boolean(),
-		weight: tgql.float(),
-	});
-
 	test('basic', async () => {
 		type Context = { currentUser: string };
 		const user = tgql
@@ -95,6 +87,13 @@ describe('tGQL Resolvers', () => {
 	});
 
 	test('mutation', () => {
+		const UserInput = tgql.inputObject('UserInput', {
+			firstName: tgql.string().nullable().defaultValue('Bob'),
+			lastName: tgql.string(),
+			age: tgql.int(),
+			isCool: tgql.boolean(),
+			weight: tgql.float(),
+		});
 		tgql
 			.mutation()
 			.returns(User)
