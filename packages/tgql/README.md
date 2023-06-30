@@ -74,35 +74,6 @@ const user = tgql
 const schema = tgql.registerResolvers({ user }).createSchema();
 ```
 
-## Progress
-
-- [x] objects
-- [x] arrays
-- [x] enums
-- [x] input objects
-- [x] scalars
-- [x] queries
-- [x] mutations
-- [x] field resolvers
-- [x] type inference
-- [x] simple middleware
-- [x] basic schema builder
-- [x] Add support for custom scalars
-- [x] Add object to input object utility
-- [x] Add support for unions
-- [x] Add support for interfaces
-
-## TODO
-
-- [ ] More documentation & tests
-- [ ] Create client methods for tGQL
-- [ ] Add support for subscriptions
-- [ ] Add support for fragments
-- [ ] Better error handling
-- [ ] Add support for directives
-- [x] Improved resolvers system
-- [ ] Update middleware implementation
-
 [badge-size]: https://badgen.net/bundlephobia/minzip/tgql
 [badge-tree-shaking]: https://badgen.net/bundlephobia/tree-shaking/tgql
 [link-bundlephobia]: https://bundlephobia.com/package/tgql

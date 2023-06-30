@@ -1,0 +1,34 @@
+name: Publish Package to npmjs
+on:
+  release:
+    types: [published]
+jobs:
+  build:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - uses: ./.github/actions/setup
+
+      - name: Setup Node for publishing
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18.x'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Publish packages
+        run: |
+          for dir in ./packages/*; 			        # For every item in the packages folder:
+          	do ( 
+          		if [ -d "$dir" ]; 			        # If it is a directory:			
+          			then (
+                        cd "$dir" &&                # Go into the directory 
+          				bun run build &&            # Build the package
+                        npm publish --access public # Publish the package
+          			);
+          		fi
+          	); 
+          done
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

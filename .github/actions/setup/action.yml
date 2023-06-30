@@ -1,0 +1,13 @@
+name: 'Setup'
+description: 'Checkout, setup bun, and install dependencies'
+runs:
+  using: 'composite'
+  steps:
+    - name: Setup Bun
+      uses: oven-sh/setup-bun@v1
+      with:
+        bun-version: latest
+
+    - name: Install Dependencies
+      run: bun install
+      shell: bash

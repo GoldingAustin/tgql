@@ -1,0 +1,30 @@
+{
+	"name": "@tgql/client",
+	"version": "0.0.0",
+	"author": {
+		"name": "Austin Golding",
+		"email": "austin.golding.dev@icloud.com"
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/GoldingAustin/tgql"
+	},
+	"license": "MIT",
+	"main": "./dist/index.js",
+	"types": "./src/index.ts",
+	"module": "./dist/index.mjs",
+	"files": [
+		"dist",
+		"README.md",
+		"LICENSE",
+		"package.json"
+	],
+	"sideEffects": false,
+	"scripts": {
+		"build": "tsup-node ./src/index.ts --clean --sourcemap --minify --format esm,cjs",
+		"test": "bun test"
+	},
+	"peerDependencies": {
+		"graphql": "^16"
+	}
+}

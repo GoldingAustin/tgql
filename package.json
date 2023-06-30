@@ -1,36 +1,66 @@
 {
-  "name": "tgql",
-  "author": {
-    "name": "Austin Golding",
-    "email": "austin.golding.dev@icloud.com"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/GoldingAustin/tgql"
-  },
-  "license": "MIT",
-  "version": "0.0.1-alpha.4",
-  "main": "./dist/index.js",
-  "types": "./src/index.ts",
-  "module": "./dist/index.mjs",
-  "files": ["dist", "src", "README.md", "LICENSE", "package.json"],
-  "sideEffects": false,
-  "scripts": {
-    "build": "tsup-node ./src/index.ts --clean --sourcemap --minify --format esm,cjs",
-    "test": "bun test",
-    "typecheck": "tsc --noEmit",
-    "format": "rome format --write .",
-    "lint": "rome check --apply-unsafe ./src",
-    "dev": "bun --watch temp/index.ts"
-  },
-  "peerDependencies": {
-    "graphql": "^16"
-  },
-  "devDependencies": {
-    "typescript": "^5.1.3",
-    "tsup": "^7.1.0",
-    "graphql": "^16.6.0",
-    "bun-types": "^0.6.8",
-    "rome": "^12.1.3"
-  }
+	"name": "tgql-monorepo",
+	"author": {
+		"name": "Austin Golding",
+		"email": "austin.golding.dev@icloud.com"
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/GoldingAustin/tgql"
+	},
+	"workspaces": [
+		"packages/*"
+	],
+	"license": "MIT",
+	"version": "0.0.1",
+	"sideEffects": false,
+	"scripts": {
+		"build:server": "cd packages/server && bun run build",
+		"build:client": "cd packages/client && bun run build",
+		"build:core": "cd packages/tgql && bun run build",
+		"build": "bun build:server && bun build:client && bun build:core",
+		"test": "bun test",
+		"format": "prettier --write . --ignore-path .gitignore",
+		"lint": "eslint --fix ./packages --ignore-path .gitignore",
+		"dev": "bun --watch temp/index.ts"
+	},
+	"peerDependencies": {
+		"graphql": "^16"
+	},
+	"devDependencies": {
+		"typescript": "^5.1.3",
+		"tsup": "^7.1.0",
+		"graphql": "^16.7.1",
+		"bun-types": "^0.6.11",
+		"prettier": "^2.8.8",
+		"eslint": "^8.43.0",
+		"@typescript-eslint/parser": "^5.60.1",
+		"@typescript-eslint/eslint-plugin": "^5.60.1",
+		"eslint-plugin-import": "^2.27.5",
+		"eslint-config-prettier": "^8.8.0"
+	},
+	"prettier": {
+		"printWidth": 120,
+		"useTabs": true,
+		"singleQuote": true,
+		"endOfLine": "lf",
+		"trailingComma": "es5"
+	},
+	"eslintConfig": {
+		"extends": [
+			"eslint:recommended",
+			"plugin:@typescript-eslint/recommended",
+			"eslint-config-prettier"
+		],
+		"parser": "@typescript-eslint/parser",
+		"plugins": [
+			"@typescript-eslint",
+			"import"
+		],
+		"rules": {
+			"@typescript-eslint/consistent-type-imports": "warn",
+			"@typescript-eslint/no-explicit-any": 0
+		},
+		"root": true
+	}
 }
