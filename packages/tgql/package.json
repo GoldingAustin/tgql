@@ -1,20 +1,30 @@
 {
 	"name": "tgql",
+	"description": "TypeScript-first GraphQL schema builder and companion client",
 	"author": {
 		"name": "Austin Golding",
 		"email": "austin.golding.dev@icloud.com"
+	},
+	"contributors": [
+		{
+			"name": "Devan Farrell"
+		}
+	],
+	"bugs": {
+		"url": "https://github.com/GoldingAustin/tgql/issues"
 	},
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/GoldingAustin/tgql"
 	},
 	"license": "MIT",
-	"version": "0.0.1-alpha.5",
+	"version": "0.0.1-alpha.6",
 	"main": "./dist/index.js",
 	"types": "./src/index.ts",
 	"module": "./dist/index.mjs",
 	"files": [
 		"dist",
+		"src",
 		"README.md",
 		"LICENSE",
 		"package.json"
