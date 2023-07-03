@@ -11,7 +11,7 @@ export class tGQLFieldResolver<
 	private readonly _args: Args | undefined;
 	override readonly _class = 'tGQLFieldResolver' as const;
 
-	constructor(tGQLType: tGQLType, public resolver: (parent: Parent, args: Args) => Infer<tGQLType>, args?: Args) {
+	constructor(tGQLType: tGQLType, public resolver: (parent: Parent, args: Args, context: any) => Infer<tGQLType>, args?: Args) {
 		super({ tGQLType });
 		this._args = args;
 	}
@@ -30,7 +30,7 @@ export class tGQLFieldResolver<
 	}
 }
 
-export class FieldResolverBuilder<tGQLType extends tGQLBaseTypeAny> extends tGQLNonNull<
+export class FieldResolverBuilder<TContext, tGQLType extends tGQLBaseTypeAny> extends tGQLNonNull<
 	tGQLType,
 	Infer<tGQLType> | undefined,
 	tGQLType['_graphQLType']['ofType']
@@ -39,17 +39,17 @@ export class FieldResolverBuilder<tGQLType extends tGQLBaseTypeAny> extends tGQL
 
 	fieldResolver<ReturnType extends tGQLOutputTypes>(
 		returnType: ReturnType,
-		resolver: (value: Infer<tGQLType>, args: undefined) => Infer<ReturnType>
+		resolver: (value: Infer<tGQLType>, args: undefined, context: TContext) => Infer<ReturnType>
 	): tGQLFieldResolver<ReturnType, ArgsInput | undefined, Infer<tGQLType>>;
 	fieldResolver<ReturnType extends tGQLOutputTypes, Args extends ArgsInput>(
 		returnType: ReturnType,
 		args: Args,
-		resolver: (value: Infer<tGQLType>, args: InferArgs<Args>) => Infer<ReturnType>
+		resolver: (value: Infer<tGQLType>, args: InferArgs<Args>, context: TContext) => Infer<ReturnType>
 	): tGQLFieldResolver<ReturnType, Args, Infer<tGQLType>>;
 	fieldResolver<ResolveType extends tGQLOutputTypes, Args extends ArgsInput>(
 		type: ResolveType,
 		args: Args | ((value: Infer<tGQLType>) => Infer<ResolveType>),
-		resolver?: (value: Infer<tGQLType>, args: Args) => Infer<ResolveType>
+		resolver?: (value: Infer<tGQLType>, args: Args, context: TContext) => Infer<ResolveType>
 	): tGQLFieldResolver<ResolveType, Args, Infer<tGQLType>> {
 		return resolver
 			? new tGQLFieldResolver(type, resolver, args as Args)
