@@ -13,7 +13,7 @@ export class tGQLFieldResolver<
 	constructor(
 		tGQLType: tGQLType,
 		public resolver: (parent: Parent, args: Args, context: any) => Infer<tGQLType>,
-		private readonly _args: Args
+		public readonly _args: Args
 	) {
 		super({ tGQLType, graphQLType: undefined as any });
 	}

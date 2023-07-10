@@ -40,7 +40,7 @@ export function scalar<GraphQLType extends GraphQLScalarType>(graphQLType: Graph
 	return new tGQLCustomScalar({ name: graphQLType.name, graphQLType });
 }
 
-function enum_<T extends string[] | readonly string[]>(name: string, values: T): tGQLEnum<T> {
+function enum_<T extends string[] | readonly string[], Name extends string>(name: Name, values: T): tGQLEnum<T, Name> {
 	return new tGQLEnum(name, values);
 }
 
@@ -48,22 +48,28 @@ export function list<T extends tGQLBaseTypeAny>(type: T): tGQLList<T> {
 	return new tGQLList(type);
 }
 
-export function object<T extends tGQLObjectFieldsBase<tGQLOutputTypes>>(name: string, fields: T): tGQLObject<T> {
-	return new tGQLObject<T>(name, fields);
-}
-
-function interface_<T extends tGQLObjectFieldsBase<tGQLOutputTypes>>(name: string, fields: T): tGQLInterface<T> {
-	return new tGQLInterface<T>(name, fields);
-}
-
-export function union<T extends tGQLObject<any>[]>(name: string, types: T): tGQLUnion<T> {
-	return new tGQLUnion<T>(name, types);
-}
-
-export function inputObject<T extends tGQLObjectFieldsBase<tGQLInputTypes>>(
-	name: string,
+export function object<T extends tGQLObjectFieldsBase<tGQLOutputTypes>, Name extends string>(
+	name: Name,
 	fields: T
-): tGQLInputObject<T> {
+): tGQLObject<T, Name> {
+	return new tGQLObject<T, Name>(name, fields);
+}
+
+function interface_<T extends tGQLObjectFieldsBase<tGQLOutputTypes>, Name extends string>(
+	name: Name,
+	fields: T
+): tGQLInterface<T, Name> {
+	return new tGQLInterface<T, Name>(name, fields);
+}
+
+export function union<T extends tGQLObject<any, any>[], Name extends string>(name: Name, types: T): tGQLUnion<T, Name> {
+	return new tGQLUnion<T, Name>(name, types);
+}
+
+export function inputObject<T extends tGQLObjectFieldsBase<tGQLInputTypes>, Name extends string>(
+	name: Name,
+	fields: T
+): tGQLInputObject<T, Name> {
 	return new tGQLInputObject(name, fields);
 }
 

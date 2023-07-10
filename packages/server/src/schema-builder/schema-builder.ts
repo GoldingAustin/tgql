@@ -1,9 +1,16 @@
+import type { GraphQLTypeMap } from '../types.ts';
 import type { ResolverMap, ResolverType } from './types.ts';
 import { GraphQLObjectType } from 'graphql';
 import { GraphQLSchema } from 'graphql';
 
 export class SchemaBuilder<Resolvers extends ResolverMap<ResolverType>> {
-	constructor(public resolvers: Resolvers) {}
+	public graphqlTypeMap: GraphQLTypeMap = {};
+	public graphqlInputTypeMap: GraphQLTypeMap = {};
+	public graphQLSchema!: GraphQLSchema;
+	constructor(public resolvers: Resolvers) {
+		this.resolvers = resolvers;
+		this.createSchema();
+	}
 
 	private createResolverMap(name: ResolverType, resolvers: ResolverMap<ResolverType>) {
 		const entries = Object.entries(resolvers);
@@ -15,7 +22,7 @@ export class SchemaBuilder<Resolvers extends ResolverMap<ResolverType>> {
 		}
 	}
 
-	public createSchema(): GraphQLSchema {
+	public createSchema() {
 		const queries: ResolverMap<ResolverType> = {};
 		const mutations: ResolverMap<ResolverType> = {};
 		for (const [key, builder] of Object.entries(this.resolvers)) {
@@ -32,6 +39,6 @@ export class SchemaBuilder<Resolvers extends ResolverMap<ResolverType>> {
 			query: this.createResolverMap('Query', queries),
 			mutation: this.createResolverMap('Mutation', mutations),
 		};
-		return new GraphQLSchema(gqlResolvers);
+		this.graphQLSchema = new GraphQLSchema(gqlResolvers);
 	}
 }

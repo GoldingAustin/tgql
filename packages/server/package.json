@@ -48,6 +48,7 @@
 	},
 	"scripts": {
 		"build": "tsup-node ./src/index.ts --clean --sourcemap --minify --format esm,cjs",
-		"test": "bun test"
+		"test": "bun test",
+		"typecheck": "tsc --noEmit"
 	}
 }

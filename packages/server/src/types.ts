@@ -18,6 +18,7 @@ import type { tGQLInterface } from './types-builder/index.ts';
 import type { tGQLCustomScalar } from './types-builder/tgql-types/scalars.ts';
 import type { tGQLUnion } from './types-builder/tgql-types/union.ts';
 import type { GraphQLNonNull, GraphQLScalarType, GraphQLType as GraphQLTypes } from 'graphql';
+import type { tGQLNullableWithDefault } from './types-builder/index.ts';
 
 export type tGQLBaseTypeAny = tGQLBase<any, any, any>;
 
@@ -28,22 +29,25 @@ export type tGQLBaseTypes =
 	| tGQLID
 	| tGQLBool
 	| tGQLCustomScalar<GraphQLScalarType>
-	| tGQLEnum<string[] | readonly string[]>;
+	| tGQLEnum<string[] | readonly string[], any>;
 
 export type tGQLOutputTypes =
 	| tGQLBaseTypes
-	| tGQLObject<any>
+	| tGQLObject<any, any>
 	| tGQLList<tGQLOutputTypes>
 	| tGQLNullable<tGQLOutputTypes>
-	| tGQLInterface<any>
-	| tGQLUnion<tGQLObject<any>[]>
+	| tGQLInterface<any, any>
+	| tGQLUnion<tGQLObject<any, any>[], any>
 	| tGQLFieldResolver<any, any, any>;
 
 export type tGQLInputTypes =
 	| tGQLBaseTypes
-	| tGQLInputObject<any>
+	| tGQLInputObject<any, any>
 	| tGQLList<tGQLInputTypes>
-	| tGQLNullableBase<tGQLInputTypes>;
+	| tGQLNullable<tGQLInputTypes>
+	| tGQLNullableWithDefault<tGQLInputTypes>;
+
+export type tGQLTypes = tGQLOutputTypes | tGQLInputTypes;
 
 export type GraphQLTypeMap = Record<string, GraphQLTypes>;
 export type Infer<T extends tGQLBaseTypeAny> = T['_type'];

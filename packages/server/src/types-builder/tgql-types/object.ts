@@ -8,14 +8,14 @@ import type { tGQLInterface } from './interface.ts';
 import type { GraphQLFieldConfig, GraphQLFieldConfigMap } from 'graphql';
 import { GraphQLObjectType } from 'graphql';
 
-export class tGQLObject<Fields extends tGQLObjectFieldsBase<tGQLOutputTypes>> extends tGQLNonNull<
-	tGQLObject<Fields>,
+export class tGQLObject<Fields extends tGQLObjectFieldsBase<tGQLOutputTypes>, Name extends string> extends tGQLNonNull<
+	tGQLObject<Fields, Name>,
 	Expand<UndefinedAsOptional<Fields>>,
 	GraphQLObjectType
 > {
-	declare name: string;
+	declare name: Name;
 	override readonly _class = 'tGQLObject' as const;
-	private resolvers?: (builder: FieldResolverBuilder<any, this>) => Record<string, tGQLFieldResolver<any, any, any>>;
+	public resolvers?: (builder: FieldResolverBuilder<any, this>) => Record<string, tGQLFieldResolver<any, any, any>>;
 	constructor(name: string, public fields: Fields, private interfaces: tGQLInterface<any>[] = []) {
 		super({
 			name,
@@ -56,18 +56,20 @@ export class tGQLObject<Fields extends tGQLObjectFieldsBase<tGQLOutputTypes>> ex
 		return this;
 	}
 
-	public toInput(name: string): ReturnType<typeof toInputObject<tGQLObject<Fields>>> {
-		return toInputObject<tGQLObject<Fields>>(name, this);
+	public toInput<NewName extends string>(
+		name: NewName
+	): ReturnType<typeof toInputObject<tGQLObject<Fields, Name>, NewName>> {
+		return toInputObject(name, this) as unknown as ReturnType<typeof toInputObject<tGQLObject<Fields, Name>, NewName>>;
 	}
 
 	/**
 	 * Extends the object with the fields of the given interface
 	 * @param tgqlInterface {tGQLInterface<any>}
-	 * @returns {tGQLObject<Expand<Fields & Interfaces['fields']>>}
+	 * @returns {tGQLObject<Expand<Fields & Interfaces['fields'], Name>>}
 	 */
-	public extends<Interfaces extends tGQLInterface<any>>(
+	public extends<Interfaces extends tGQLInterface<any, any>>(
 		tgqlInterface: Interfaces & { fields: { [K in keyof Fields]?: never } }
-	): tGQLObject<Expand<Fields & Interfaces['fields']>> {
+	): tGQLObject<Expand<Fields & Interfaces['fields']>, Name> {
 		return new tGQLObject(
 			this.name,
 			{
