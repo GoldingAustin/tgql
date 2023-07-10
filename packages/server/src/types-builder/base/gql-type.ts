@@ -2,18 +2,24 @@ import type { GraphQLNullCheck, GraphQLTypeMap, tGQLBaseTypeAny } from '../../ty
 import type { GraphQLType as GraphQLTypes } from 'graphql';
 import { GraphQLNonNull } from 'graphql';
 
-export abstract class tGQLBase<tGQLType extends tGQLBaseTypeAny, TypescriptType, GraphQLType extends GraphQLTypes> {
-	abstract readonly _class: string;
+export abstract class tGQLBase<
+	tGQLType extends tGQLBaseTypeAny,
+	TypescriptType,
+	GraphQLType extends GraphQLTypes,
+	Name extends string = string,
+	Class extends string = string
+> {
+	abstract readonly _class: Class;
 	abstract _nullable: boolean;
 	declare _type: TypescriptType;
 	readonly _graphQLType!: GraphQLType;
 	readonly _tGQLType!: tGQLType;
-	readonly name: string | undefined;
+	readonly name: Name | undefined;
 
 	_deprecationReason: string | undefined;
 	_description: string | undefined;
 
-	constructor({ tGQLType, graphQLType, name }: { tGQLType?: tGQLType; graphQLType?: GraphQLTypes; name?: string }) {
+	constructor({ tGQLType, graphQLType, name }: { tGQLType?: tGQLType; graphQLType?: GraphQLTypes; name?: Name }) {
 		if (tGQLType) this._tGQLType = tGQLType;
 		if (graphQLType) this._graphQLType = graphQLType as GraphQLType;
 		this.name = name;

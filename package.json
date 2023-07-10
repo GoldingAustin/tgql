@@ -22,6 +22,7 @@
 	"scripts": {
 		"build": "lerna run build",
 		"publish": "lerna publish from-package",
+		"typecheck": "lerna run typecheck",
 		"test": "bun test",
 		"format": "prettier --write . --ignore-path .gitignore",
 		"lint": "eslint --fix ./packages --ignore-path .gitignore",

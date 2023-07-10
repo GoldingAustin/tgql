@@ -8,7 +8,7 @@ export class tGQLFieldResolver<
 	Args extends ArgsInput | undefined,
 	Parent
 > extends tGQLNonNull<tGQLType, Infer<tGQLType>, GraphQLOutputType> {
-	private readonly _args: Args | undefined;
+	public readonly _args: Args | undefined;
 	override readonly _class = 'tGQLFieldResolver' as const;
 
 	constructor(tGQLType: tGQLType, public resolver: (parent: Parent, args: Args) => Infer<tGQLType>, args?: Args) {

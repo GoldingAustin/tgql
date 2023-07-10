@@ -5,7 +5,7 @@ import type { GraphQLFieldConfig, GraphQLFieldConfigArgumentMap, GraphQLFieldRes
 
 export class ResolverBuilder<
 	TContext,
-	TSource extends tGQLObject<any>,
+	TSource extends tGQLObject<any, any>,
 	TArgs extends ArgsInput,
 	TResult extends tGQLOutputTypes,
 	Type extends ResolverType
@@ -15,7 +15,7 @@ export class ResolverBuilder<
 	private _description: string | undefined;
 	private _deprecationReason: string | undefined;
 	_returns: TResult | undefined;
-	_args: TArgs | undefined;
+	_args: TArgs = {} as TArgs;
 
 	private _resolver?: Resolver<TContext, TSource, TArgs, TResult>;
 	private _middleware: Middleware<TContext, TResult, TArgs, TSource>[] = [];

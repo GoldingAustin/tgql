@@ -1,3 +1,1 @@
-export function createClient() {
-	return 'TODO: create client';
-}
+export { createClient } from './create-client.ts';

@@ -3,7 +3,7 @@ import { ResolverBuilder } from './resolver-builder.ts';
 import { SchemaBuilder } from './schema-builder.ts';
 import type { ResolverMap, ResolverType } from './types.ts';
 
-export function query<TContext, TSource extends tGQLObject<any> = tGQLObject<any>>(): ResolverBuilder<
+export function query<TContext, TSource extends tGQLObject<any, any> = tGQLObject<any, any>>(): ResolverBuilder<
 	TContext,
 	TSource,
 	any,
@@ -13,7 +13,7 @@ export function query<TContext, TSource extends tGQLObject<any> = tGQLObject<any
 	return new ResolverBuilder('Query');
 }
 
-export function mutation<TContext, TSource extends tGQLObject<any> = tGQLObject<any>>(): ResolverBuilder<
+export function mutation<TContext, TSource extends tGQLObject<any, any> = tGQLObject<any, any>>(): ResolverBuilder<
 	TContext,
 	TSource,
 	any,

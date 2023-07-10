@@ -3,12 +3,12 @@ import { tGQLNonNull } from '../index.ts';
 import type { tGQLObject } from '../index.ts';
 import { GraphQLUnionType } from 'graphql';
 
-export class tGQLUnion<tGQLTypes extends tGQLObject<any>[]> extends tGQLNonNull<
-	tGQLUnion<tGQLTypes>,
+export class tGQLUnion<tGQLTypes extends tGQLObject<any, any>[], Name extends string> extends tGQLNonNull<
+	tGQLUnion<tGQLTypes, Name>,
 	Infer<tGQLTypes[number]>,
 	GraphQLUnionType
 > {
-	declare name: string;
+	declare name: Name;
 
 	override readonly _class = 'tGQLUnion' as const;
 

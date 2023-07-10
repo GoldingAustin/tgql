@@ -40,12 +40,12 @@ describe('tGQL Resolvers', () => {
 				];
 			});
 
-		const schema = tgql.registerResolvers({ user, users }).createSchema();
-		expect(schema).toBeDefined();
-		expect(printSchema(schema)).toMatch(expectedSchema);
+		const tgqlSchema = tgql.registerResolvers({ user, users });
+		expect(tgqlSchema.graphQLSchema).toBeDefined();
+		expect(printSchema(tgqlSchema.graphQLSchema)).toMatch(expectedSchema);
 
 		const result = await graphql({
-			schema,
+			schema: tgqlSchema.graphQLSchema,
 			source: `
 				fragment PartialUser on User {
 					id
@@ -132,7 +132,8 @@ describe('tGQL Resolvers', () => {
 				};
 			});
 
-		const schema = tgql.registerResolvers({ user }).createSchema();
+		const tgqlSchema = tgql.registerResolvers({ user });
+		const schema = tgqlSchema.graphQLSchema;
 		await graphql({
 			schema,
 			source: `query ExampleQuery {
