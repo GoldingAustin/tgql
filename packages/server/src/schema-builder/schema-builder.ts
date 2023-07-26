@@ -4,8 +4,6 @@ import { GraphQLObjectType } from 'graphql';
 import { GraphQLSchema } from 'graphql';
 
 export class SchemaBuilder<Resolvers extends ResolverMap<ResolverType>> {
-	private graphqlTypeMap: GraphQLTypeMap = {};
-	private graphqlInputTypeMap: GraphQLTypeMap = {};
 
 	constructor(public resolvers: Resolvers) {}
 
@@ -15,7 +13,7 @@ export class SchemaBuilder<Resolvers extends ResolverMap<ResolverType>> {
 			return new GraphQLObjectType({
 				name,
 				fields: Object.fromEntries(
-					entries.map(([key, builder]) => [key, builder.build(this.graphqlTypeMap, this.graphqlInputTypeMap)])
+					entries.map(([key, builder]) => [key, builder.build()])
 				),
 			});
 		}

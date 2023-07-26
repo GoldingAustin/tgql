@@ -1,19 +1,18 @@
-import type { GraphQLNullCheck, GraphQLTypeMap, tGQLBaseTypeAny } from '../../types.ts';
+import type { tGQLBaseTypeAny } from '../../types.ts';
 import type { GraphQLType as GraphQLTypes } from 'graphql';
-import { GraphQLNonNull } from 'graphql';
 
-export abstract class tGQLBase<tGQLType extends tGQLBaseTypeAny, TypescriptType, GraphQLType extends GraphQLTypes> {
+export abstract class tGQLBase<tGQLType extends tGQLBaseTypeAny, TypescriptType, GraphQLType extends GraphQLTypes & {description?: string; deprecationReason?: string;}> {
 	abstract readonly _class: string;
 	abstract _nullable: boolean;
 	declare _type: TypescriptType;
-	readonly _graphQLType!: GraphQLType;
+	_graphQLType!: GraphQLType;
 	readonly _tGQLType!: tGQLType;
 	readonly name: string | undefined;
 
 	_deprecationReason: string | undefined;
 	_description: string | undefined;
 
-	constructor({ tGQLType, graphQLType, name }: { tGQLType?: tGQLType; graphQLType?: GraphQLTypes; name?: string }) {
+	constructor({ tGQLType, graphQLType, name }: { tGQLType?: tGQLType; graphQLType: GraphQLTypes; name?: string }) {
 		if (tGQLType) this._tGQLType = tGQLType;
 		if (graphQLType) this._graphQLType = graphQLType as GraphQLType;
 		this.name = name;
@@ -21,38 +20,19 @@ export abstract class tGQLBase<tGQLType extends tGQLBaseTypeAny, TypescriptType,
 
 	deprecated(reason: string): this {
 		this._deprecationReason = reason;
+		this._graphQLType.deprecationReason = reason;
 		return this;
 	}
 
 	description(description: string): this {
 		this._description = description;
+		this._graphQLType.description = description;
 		return this;
 	}
 
-	_createGraphQLType<Override extends GraphQLNullCheck<GraphQLType>>({
-		overrideType,
-		graphqlTypeMap,
-	}: {
-		overrideType?: Override;
-		graphqlTypeMap?: GraphQLTypeMap;
-	} = {}): GraphQLType {
-		if (this.name && graphqlTypeMap && graphqlTypeMap[this.name]) {
-			return graphqlTypeMap[this.name] as GraphQLType;
-		} else {
-			const type = (this._nullable
-				? overrideType || this._graphQLType
-				: new GraphQLNonNull(overrideType || this._graphQLType)) as unknown as GraphQLType;
-			if (this.name && graphqlTypeMap) {
-				graphqlTypeMap[this.name] = type;
-			}
-			return type;
-		}
-	}
-
-	fieldConfig(graphqlTypeMap?: GraphQLTypeMap): any {
-		const graphQLType = this._createGraphQLType({ graphqlTypeMap });
+	get fieldConfig(): any {
 		return {
-			type: graphQLType,
+			type: this._graphQLType,
 			description: this._description,
 			deprecationReason: this._deprecationReason,
 		};

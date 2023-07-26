@@ -1,5 +1,4 @@
 import type { Expand, tGQLInputTypes, ToOptional, ToRequired, UndefinedAsOptional } from '../../types.ts';
-import type { GraphQLTypeMap } from '../../types.ts';
 import type { tGQLFieldResolver, tGQLNullableBase, tGQLObject } from '../index.ts';
 import { tGQLNonNull } from '../index.ts';
 import type { GraphQLInputFieldConfig, GraphQLInputFieldConfigMap } from 'graphql';
@@ -14,30 +13,38 @@ export class tGQLInputObject<InputFields extends Record<string, tGQLInputTypes>>
 	override readonly _class = 'tGQLInputObject' as const;
 
 	constructor(name: string, public fields: InputFields) {
-		super({ name });
+		super({
+			name,
+			graphQLType: new GraphQLInputObjectType({
+				name: name,
+				fields: tGQLInputObject.buildFields(fields),
+			}),
+		});
 	}
 
-	private buildFields(graphqlTypeMap?: GraphQLTypeMap): GraphQLInputFieldConfigMap {
+	private static buildFields<IFields extends Record<string, tGQLInputTypes>>(
+		_fields: IFields
+	): GraphQLInputFieldConfigMap {
 		const fields: GraphQLInputFieldConfigMap = {};
-		for (const [key, tGQLType] of Object.entries(this.fields)) {
+		for (const [key, tGQLType] of Object.entries(_fields)) {
 			if (tGQLType._class === 'tGQLObject') {
 				throw new Error(`Cannot use output type ${tGQLType.name} in input object`);
 			}
-			fields[key] = tGQLType.fieldConfig(graphqlTypeMap) as unknown as GraphQLInputFieldConfig;
+			fields[key] = tGQLType.fieldConfig as unknown as GraphQLInputFieldConfig;
 		}
 		return fields;
 	}
 
-	override _createGraphQLType({ graphqlTypeMap }: { graphqlTypeMap?: GraphQLTypeMap }) {
-		return super._createGraphQLType({
-			graphqlTypeMap,
-			overrideType: new GraphQLInputObjectType({
-				name: this.name,
-				fields: this.buildFields(graphqlTypeMap),
-				description: this._description,
-			}),
-		});
-	}
+	// override _createGraphQLType({ graphqlTypeMap }: { graphqlTypeMap?: GraphQLTypeMap }) {
+	// 	return super._createGraphQLType({
+	// 		graphqlTypeMap,
+	// 		overrideType: new GraphQLInputObjectType({
+	// 			name: this.name,
+	// 			fields: this.buildFields(graphqlTypeMap),
+	// 			description: this._description,
+	// 		}),
+	// 	});
+	// }
 }
 
 class ToInputObject<Obj extends tGQLObject<any>, InputObjFields extends Record<string, tGQLInputTypes> | undefined> {

@@ -1,7 +1,7 @@
 export { tGQLBase } from './base/gql-type.ts';
 export { tGQLNonNull } from './base/non-null.ts';
 export { tGQLNullable, tGQLNullableBase, tGQLNullableWithDefault } from './base/nullable.ts';
-export { tGQLList } from './tgql-types/array.ts';
+export { tGQLList } from './tgql-types/list.ts';
 export { tGQLFieldResolver } from './tgql-types/field-resolver.ts';
 export { tGQLInterface } from './tgql-types/interface.ts';
 export { tGQLObject } from './tgql-types/object.ts';

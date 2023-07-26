@@ -1,6 +1,6 @@
 import { GraphQLScalarType, Kind } from 'graphql/index';
 import { tgql } from '../src';
-import { InferResolverReturn } from '../src/schema-builder/types';
+import type { InferResolverReturn } from '../src/schema-builder/types';
 
 export const dateScalar = new GraphQLScalarType({
 	name: 'Date',
@@ -130,6 +130,11 @@ const CastMember = tgql.object('CastMember', {
 	birthdate: tgql.scalar(dateScalar),
 });
 
+const Studio = tgql.object('Studio', {
+	id: tgql.id(),
+	name: tgql.string(),
+});
+
 Movie.fieldResolvers<Context>((builder) => ({
 	cast: builder.fieldResolver(tgql.list(CastMember), (movie, _args, context) => {
 		const associations = context.movieCast.filter((casting) => casting.movieId === movie.id);
@@ -146,11 +151,6 @@ CastMember.fieldResolvers<Context>((builder) => ({
 		return context.movies.filter((movie) => !!associations.find((association) => association.movieId === movie.id));
 	}),
 }));
-
-const Studio = tgql.object('Studio', {
-	id: tgql.id(),
-	name: tgql.string(),
-});
 
 const findMovie = async (id: string, context: Context) => {
 	const movie = context.movies.find((i) => i.id === id);

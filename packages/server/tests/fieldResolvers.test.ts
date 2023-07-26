@@ -102,6 +102,7 @@ type CastMember {
   id: ID!
   name: String!
   birthdate: Date!
+  movies: [Movie!]!
 }
 
 \"\"\"Date custom scalar type\"\"\"

@@ -1,5 +1,5 @@
 import type { ArgsInput, InferArgs } from '../../schema-builder/types.ts';
-import type { GraphQLTypeMap, Infer, tGQLBaseTypeAny, tGQLOutputTypes } from '../../types.ts';
+import type { Infer, tGQLBaseTypeAny, tGQLOutputTypes } from '../../types.ts';
 import { tGQLNonNull } from '../index.ts';
 import type { GraphQLFieldConfig, GraphQLFieldConfigArgumentMap, GraphQLOutputType } from 'graphql';
 
@@ -8,24 +8,25 @@ export class tGQLFieldResolver<
 	Args extends ArgsInput | undefined,
 	Parent
 > extends tGQLNonNull<tGQLType, Infer<tGQLType>, GraphQLOutputType> {
-	private readonly _args: Args | undefined;
 	override readonly _class = 'tGQLFieldResolver' as const;
 
-	constructor(tGQLType: tGQLType, public resolver: (parent: Parent, args: Args, context: any) => Infer<tGQLType>, args?: Args) {
-		super({ tGQLType });
-		this._args = args;
+	constructor(
+		tGQLType: tGQLType,
+		public resolver: (parent: Parent, args: Args, context: any) => Infer<tGQLType>,
+		private readonly _args: Args
+	) {
+		super({ tGQLType, graphQLType: undefined as any });
 	}
 
-	override fieldConfig(graphqlTypeMap?: GraphQLTypeMap): Partial<GraphQLFieldConfig<any, any>> {
+	get fieldConfig(): Partial<GraphQLFieldConfig<any, any>> {
 		return {
-			type: this._tGQLType.fieldConfig(graphqlTypeMap).type,
+			type: (this._tGQLType as tGQLBaseTypeAny)._graphQLType,
 			resolve: this.resolver,
-			args: (this._args
-				? Object.fromEntries(
-						Object.entries(this._args).map(([key, tGQLType]) => [key, tGQLType.fieldConfig(graphqlTypeMap)])
-				  )
-				: undefined) as GraphQLFieldConfigArgumentMap,
-			description: this._description,
+			args: this._args
+				? (Object.fromEntries(
+						Object.entries(this._args).map(([key, tGQLType]) => [key, tGQLType.fieldConfig])
+				  ) as GraphQLFieldConfigArgumentMap)
+				: undefined,
 		};
 	}
 }
@@ -33,7 +34,7 @@ export class tGQLFieldResolver<
 export class FieldResolverBuilder<TContext, tGQLType extends tGQLBaseTypeAny> extends tGQLNonNull<
 	tGQLType,
 	Infer<tGQLType> | undefined,
-	tGQLType['_graphQLType']['ofType']
+	tGQLType['_graphQLType']
 > {
 	override readonly _class = 'FieldResolverBuilder' as const;
 
@@ -53,6 +54,6 @@ export class FieldResolverBuilder<TContext, tGQLType extends tGQLBaseTypeAny> ex
 	): tGQLFieldResolver<ResolveType, Args, Infer<tGQLType>> {
 		return resolver
 			? new tGQLFieldResolver(type, resolver, args as Args)
-			: new tGQLFieldResolver(type, args as (value: Infer<this>) => Infer<ResolveType>);
+			: new tGQLFieldResolver(type, args as (value: Infer<this>) => Infer<ResolveType>, undefined as any);
 	}
 }
