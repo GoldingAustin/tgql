@@ -1,4 +1,4 @@
-import { GraphQLScalarType, Kind } from 'graphql/index';
+import { GraphQLScalarType, Kind } from 'graphql';
 import { tgql } from '../src';
 import type { InferResolverReturn } from '../src/schema-builder/types';
 
