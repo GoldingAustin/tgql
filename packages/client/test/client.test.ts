@@ -113,7 +113,7 @@ const client = createClient(tgqlSchema);
 
 // prettier-ignore
 const query = client.query.user
-	.build()
+	.select()
 	.id
 	.weight
 	.firstName
@@ -132,11 +132,11 @@ const query = client.query.user
 					.servings
 			)
 	)
-	.$end();
+	.$build();
 
 // prettier-ignore
 const frag = client.types.User
-	.buildFragment('UserFragment')
+	.selectFragment('UserFragment')
 	.id
 	.weight
 	.firstName
@@ -146,7 +146,7 @@ const frag = client.types.User
 			.name
 			.id
 	)
-	.$end();
+	.$build();
 
 describe('client tests', () => {
 	test('query', () => {
@@ -197,5 +197,3 @@ const queryString = `query user ($id: ID!, $middle: String!, $portions: Int!) {
 		}
 	}
 }`;
-console.log(query.gqlTemplate);
-console.log(frag.gqlTemplate);

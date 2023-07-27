@@ -35,7 +35,7 @@ export type DynamicChainedProps<
 	Inputs extends object,
 	Props extends tGQLObjectFieldsBase,
 	Key extends keyof Props
-> = Key extends '$end'
+> = Key extends '$build'
 	? EndBuilder<Inputs, Accumulated>
 	: GetSubType<Props[Key]> extends tGQLObject<infer Fields, any>
 	? ReturnBuilder<Fields, Props, Key, Accumulated, Inputs>
@@ -49,7 +49,7 @@ export type DynamicChainedProps<
 			Expand<Omit<Props, Key>>
 	  >;
 export type DynamicChained<Accumulated extends object, Inputs extends object, Props extends tGQLObjectFieldsBase> = {
-	[Key in keyof Props | '$end' as GetSubType<Props[Key]> extends tGQLObject<any, any> ? Key : Key]: DynamicChainedProps<
+	[Key in keyof Props | '$build' as GetSubType<Props[Key]> extends tGQLObject<any, any> ? Key : Key]: DynamicChainedProps<
 		Accumulated,
 		Inputs,
 		Props,
@@ -107,7 +107,7 @@ export function createProxy<Type extends GqlTemplateType<any, any, any>, tGQLTyp
 				return target[property as string];
 			} else if (property === 'toJSON') {
 				return () => target; // handles JSON.stringify
-			} else if (property === '$end') {
+			} else if (property === '$build') {
 				return () => {
 					target[property] = endBuilder(type, shape);
 					return target[property];

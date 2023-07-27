@@ -7,7 +7,7 @@ import type { tGQLObject } from '../../server/src/types-builder';
 import { graphqlStringBuilder } from './graphql-string-builder.ts';
 
 type ResolverClientBuilder<Resolver extends ResolverBuilder<any, any, any, any, any>> = {
-	build: Resolver extends ResolverBuilder<any, any, infer Args, infer Return, any>
+	select: Resolver extends ResolverBuilder<any, any, infer Args, infer Return, any>
 		? Return extends tGQLObject<any, any>
 			? <Input extends InferArgs<Args>, Returns extends object>() => Builder<Return, Returns, Input>
 			: Return extends true
@@ -41,7 +41,7 @@ type SchemaBuilderToClient<TSchemaBuilder extends SchemaBuilder<any>> = {
 				? Ret['name']
 				: never
 			: never]: {
-			buildFragment: <Input extends object, Returns extends object>(
+			selectFragment: <Input extends object, Returns extends object>(
 				name: string
 			) => Builder<TSchemaBuilder['resolvers'][TKey]['_returns'], Returns, Input>;
 			type: Infer<TSchemaBuilder['resolvers'][TKey]['_returns']>;
@@ -54,7 +54,7 @@ const resolverToBuilder = <Resolver extends ResolverBuilder<any, any, any, any, 
 	name: Name
 ) => {
 	return {
-		build: () =>
+		select: () =>
 			graphqlStringBuilder(resolver._returns, {
 				type: resolver.type,
 				name,
@@ -77,7 +77,7 @@ function createResolverBuilderToClient<Resolvers extends ResolverMap<ResolverTyp
 		else obj.query[key] = resolverToBuilder(resolver, key);
 		if (resolver._returns?.name) {
 			obj.types[resolver._returns.name] = {
-				buildFragment: <Name extends string>(name: Name) =>
+				selectFragment: <Name extends string>(name: Name) =>
 					graphqlStringBuilder(resolver._returns, {
 						type: 'Fragment',
 						name: name,
