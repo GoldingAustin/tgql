@@ -1,5 +1,5 @@
 import type { tGQLObject } from '../types-builder/index.ts';
-import type { GraphQLTypeMap, tGQLOutputTypes } from '../types.ts';
+import type { tGQLOutputTypes } from '../types.ts';
 import type { ArgsInput, InferArgs, InferResolverReturn, Middleware, Resolver, ResolverType } from './types.ts';
 import type { GraphQLFieldConfig, GraphQLFieldConfigArgumentMap, GraphQLFieldResolver } from 'graphql';
 

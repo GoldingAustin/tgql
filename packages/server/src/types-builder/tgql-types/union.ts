@@ -18,7 +18,9 @@ export class tGQLUnion<tGQLTypes extends tGQLObject<any>[]> extends tGQLNonNull<
 			name,
 			graphQLType: new GraphQLUnionType({
 				name,
-				types: types.map((tGQLType) => ('ofType' in tGQLType._graphQLType) ? tGQLType._graphQLType.ofType : tGQLType._graphQLType) as ThunkReadonlyArray<any>,
+				types: types.map((tGQLType) =>
+					'ofType' in tGQLType._graphQLType ? tGQLType._graphQLType.ofType : tGQLType._graphQLType
+				) as ThunkReadonlyArray<any>,
 			}),
 		});
 	}

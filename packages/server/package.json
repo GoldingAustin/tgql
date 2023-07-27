@@ -20,8 +20,21 @@
 	"license": "MIT",
 	"version": "0.0.1-alpha.6",
 	"main": "./dist/index.js",
-	"types": "./src/index.ts",
-	"module": "./dist/index.mjs",
+	"exports": {
+		"bun": {
+			"default": "./src/index.ts",
+			"require": "./dist/index.js"
+		},
+		"node": {
+			"default": "./dist/index.mjs",
+			"require": "./dist/index.js"
+		},
+		"default": {
+			"require": "./dist/index.js",
+			"default": "./dist/index.mjs"
+		},
+		"types": "./src/index.ts"
+	},
 	"files": [
 		"dist",
 		"src",

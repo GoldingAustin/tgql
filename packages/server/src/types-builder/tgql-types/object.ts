@@ -39,7 +39,10 @@ export class tGQLObject<Fields extends tGQLObjectFieldsBase<tGQLOutputTypes>> ex
 
 	public fieldResolvers<
 		tContext,
-		FieldReturn extends Record<string, tGQLFieldResolver<tGQLOutputTypes, any, any>> = Record<string, tGQLFieldResolver<tGQLOutputTypes, any, any>>
+		FieldReturn extends Record<string, tGQLFieldResolver<tGQLOutputTypes, any, any>> = Record<
+			string,
+			tGQLFieldResolver<tGQLOutputTypes, any, any>
+		>
 	>(fields: (builder: FieldResolverBuilder<tContext, this>) => FieldReturn) {
 		this.resolvers = fields;
 		const newFields = { ...this.fields, ...this.resolvers(new FieldResolverBuilder(this as any)) };

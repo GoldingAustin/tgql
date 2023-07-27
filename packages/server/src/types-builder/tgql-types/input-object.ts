@@ -34,17 +34,6 @@ export class tGQLInputObject<InputFields extends Record<string, tGQLInputTypes>>
 		}
 		return fields;
 	}
-
-	// override _createGraphQLType({ graphqlTypeMap }: { graphqlTypeMap?: GraphQLTypeMap }) {
-	// 	return super._createGraphQLType({
-	// 		graphqlTypeMap,
-	// 		overrideType: new GraphQLInputObjectType({
-	// 			name: this.name,
-	// 			fields: this.buildFields(graphqlTypeMap),
-	// 			description: this._description,
-	// 		}),
-	// 	});
-	// }
 }
 
 class ToInputObject<Obj extends tGQLObject<any>, InputObjFields extends Record<string, tGQLInputTypes> | undefined> {
@@ -89,7 +78,7 @@ class ToInputObject<Obj extends tGQLObject<any>, InputObjFields extends Record<s
 	 * Creates a new tGQLInputObject from the tGQLObject passed in
 	 * Uses the required, optional, added, and excluded properties
 	 * TODO: Investigate pros/cons of doing this on the fly vs. at the end
-	 * @returns {tGQLInputObject} A new tGQLInputObject
+	 * @returns A new tGQLInputObject
 	 */
 	create() {
 		const fields = this.tgqlObject.fields as typeof this.ObjFields;

@@ -8,4 +8,4 @@ export { tGQLObject } from './tgql-types/object.ts';
 export { tGQLInputObject } from './tgql-types/input-object.ts';
 export { tGQLBool, tGQLFloat, tGQLID, tGQLInt, tGQLString } from './tgql-types/scalars.ts';
 export { tGQLEnum } from './tgql-types/enum.ts';
-export * from './tgql';
+export * from './tgql.ts';

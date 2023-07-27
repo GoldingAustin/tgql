@@ -1,7 +1,11 @@
 import type { tGQLBaseTypeAny } from '../../types.ts';
 import type { GraphQLType as GraphQLTypes } from 'graphql';
 
-export abstract class tGQLBase<tGQLType extends tGQLBaseTypeAny, TypescriptType, GraphQLType extends GraphQLTypes & {description?: string; deprecationReason?: string;}> {
+export abstract class tGQLBase<
+	tGQLType extends tGQLBaseTypeAny,
+	TypescriptType,
+	GraphQLType extends GraphQLTypes & { description?: string; deprecationReason?: string }
+> {
 	abstract readonly _class: string;
 	abstract _nullable: boolean;
 	declare _type: TypescriptType;

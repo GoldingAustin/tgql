@@ -1,10 +1,8 @@
-import type { GraphQLTypeMap } from '../types.ts';
 import type { ResolverMap, ResolverType } from './types.ts';
 import { GraphQLObjectType } from 'graphql';
 import { GraphQLSchema } from 'graphql';
 
 export class SchemaBuilder<Resolvers extends ResolverMap<ResolverType>> {
-
 	constructor(public resolvers: Resolvers) {}
 
 	private createResolverMap(name: ResolverType, resolvers: ResolverMap<ResolverType>) {
@@ -12,9 +10,7 @@ export class SchemaBuilder<Resolvers extends ResolverMap<ResolverType>> {
 		if (entries.length) {
 			return new GraphQLObjectType({
 				name,
-				fields: Object.fromEntries(
-					entries.map(([key, builder]) => [key, builder.build()])
-				),
+				fields: Object.fromEntries(entries.map(([key, builder]) => [key, builder.build()])),
 			});
 		}
 	}

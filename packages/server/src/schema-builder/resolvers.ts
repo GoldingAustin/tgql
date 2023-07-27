@@ -1,4 +1,4 @@
-import type { tGQLObject } from '../types-builder';
+import type { tGQLObject } from '../types-builder/index.ts';
 import { ResolverBuilder } from './resolver-builder.ts';
 import { SchemaBuilder } from './schema-builder.ts';
 import type { ResolverMap, ResolverType } from './types.ts';

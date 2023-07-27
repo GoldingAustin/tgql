@@ -13,7 +13,7 @@ describe('tGQL Types', () => {
 
 		expect(tgql.string().nullable()._graphQLType.name).toBe('String');
 		expect(tgql.string().nullable()._graphQLType).toBe(GraphQLString);
-		expect(tgql.string().fieldConfig.type).toEqual(new GraphQLNonNull(GraphQLString));
+		expect(tgql.string()._graphQLType).toEqual(new GraphQLNonNull(GraphQLString));
 	});
 
 	test('Enum Types', () => {

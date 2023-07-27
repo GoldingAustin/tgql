@@ -37,37 +37,37 @@ query Movie {
 		});
 	});
 
-// 	test('deep field resolutions resolve correctly with context', async () => {
-// 		const { data } = await graphql({
-// 			schema,
-// 			source: String`			
-// query Movie {
-// 	movie(id: "cowboys_aliens") {
-// 		id
-// 		title
-// 		cast {
-// 			id
-// 			movies {
-// 				id
-// 			}
-// 		}
-// 	}
-// }
-// `,
-// 			contextValue: createMocks(),
-// 		});
-// 		expect(data).toEqual({
-// 			movie: {
-// 				id: 'cowboys_aliens',
-// 				title: 'Cowboys and Aliens',
-// 				studioId: 'universal',
-// 				studio: {
-// 					id: 'universal',
-// 					name: 'Universal Pictures',
-// 				},
-// 			},
-// 		});
-// 	});
+	// 	test('deep field resolutions resolve correctly with context', async () => {
+	// 		const { data } = await graphql({
+	// 			schema,
+	// 			source: String`
+	// query Movie {
+	// 	movie(id: "cowboys_aliens") {
+	// 		id
+	// 		title
+	// 		cast {
+	// 			id
+	// 			movies {
+	// 				id
+	// 			}
+	// 		}
+	// 	}
+	// }
+	// `,
+	// 			contextValue: createMocks(),
+	// 		});
+	// 		expect(data).toEqual({
+	// 			movie: {
+	// 				id: 'cowboys_aliens',
+	// 				title: 'Cowboys and Aliens',
+	// 				studioId: 'universal',
+	// 				studio: {
+	// 					id: 'universal',
+	// 					name: 'Universal Pictures',
+	// 				},
+	// 			},
+	// 		});
+	// 	});
 
 	test('schema to be defined as expected', () => {
 		expect(schema).toBeDefined();
