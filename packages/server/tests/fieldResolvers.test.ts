@@ -1,12 +1,11 @@
 import { describe, expect, test } from 'bun:test';
-import { movie, movies, castMember, cast, studio, studios, createMocks } from './movieMocks.ts';
-import { tgql } from '../src';
+import { setupMovieTests } from './movieMocks.ts';
 import { graphql, printSchema } from 'graphql';
 
 describe('tGQL Field Resolvers', () => {
-	const schema = tgql.registerResolvers({ movie, movies, castMember, cast, studio, studios }).createSchema();
-
 	test('field resolvers correctly resolve with context', async () => {
+		const { createMocks, createSchema } = setupMovieTests();
+		const schema = createSchema();
 		const { data } = await graphql({
 			schema,
 			source: String`			
@@ -37,39 +36,68 @@ query Movie {
 		});
 	});
 
-	// 	test('deep field resolutions resolve correctly with context', async () => {
-	// 		const { data } = await graphql({
-	// 			schema,
-	// 			source: String`
-	// query Movie {
-	// 	movie(id: "cowboys_aliens") {
-	// 		id
-	// 		title
-	// 		cast {
-	// 			id
-	// 			movies {
-	// 				id
-	// 			}
-	// 		}
-	// 	}
-	// }
-	// `,
-	// 			contextValue: createMocks(),
-	// 		});
-	// 		expect(data).toEqual({
-	// 			movie: {
-	// 				id: 'cowboys_aliens',
-	// 				title: 'Cowboys and Aliens',
-	// 				studioId: 'universal',
-	// 				studio: {
-	// 					id: 'universal',
-	// 					name: 'Universal Pictures',
-	// 				},
-	// 			},
-	// 		});
-	// 	});
+	test('deep field resolutions resolve correctly with context', async () => {
+		const { createMocks, createSchema } = setupMovieTests();
+		const schema = createSchema();
+		const { data } = await graphql({
+			schema,
+			source: String`
+	query Movie {
+		movie(id: "cowboys_aliens") {
+			id
+			title
+			cast {
+				id
+				movies {
+					id
+				}
+			}
+		}
+	}
+	`,
+			contextValue: createMocks(),
+		});
+		expect(data).toEqual({
+			movie: {
+				id: 'cowboys_aliens',
+				title: 'Cowboys and Aliens',
+				cast: [
+					{
+						id: 'favreau',
+						movies: [
+							{
+								id: 'cowboys_aliens',
+							},
+							{
+								id: 'iron_man',
+							},
+						],
+					},
+					{
+						id: 'ford',
+						movies: [
+							{
+								id: 'cowboys_aliens',
+							},
+						],
+					},
+
+					{
+						id: 'craige',
+						movies: [
+							{
+								id: 'cowboys_aliens',
+							},
+						],
+					},
+				],
+			},
+		});
+	});
 
 	test('schema to be defined as expected', () => {
+		const { createSchema } = setupMovieTests();
+		const schema = createSchema();
 		expect(schema).toBeDefined();
 		let expectedSchema = String`
 type Query {
