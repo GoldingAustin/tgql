@@ -1,14 +1,8 @@
-import type {
-	Expand,
-	GraphQLTypeMap,
-	tGQLObjectFieldsBase,
-	tGQLOutputTypes,
-	UndefinedAsOptional,
-} from '../../types.ts';
+import type { Expand, tGQLObjectFieldsBase, tGQLOutputTypes, UndefinedAsOptional } from '../../types.ts';
 import { tGQLNonNull } from '../index.ts';
 import { tGQLObject } from './object.ts';
 import type { GraphQLFieldConfig, GraphQLFieldConfigMap } from 'graphql';
-import { GraphQLInterfaceType } from 'graphql/type';
+import { GraphQLInterfaceType } from 'graphql';
 
 export class tGQLInterface<Fields extends tGQLObjectFieldsBase<tGQLOutputTypes>> extends tGQLNonNull<
 	tGQLInterface<Fields>,
@@ -18,26 +12,24 @@ export class tGQLInterface<Fields extends tGQLObjectFieldsBase<tGQLOutputTypes>>
 	declare name: string;
 	override readonly _class = 'tGQLInterface' as const;
 	constructor(name: string, public fields: Fields) {
-		super({ name });
-	}
-
-	private buildFields(graphqlTypeMap?: GraphQLTypeMap): GraphQLFieldConfigMap<any, any> {
-		const fields: GraphQLFieldConfigMap<any, any> = {};
-		for (const [key, tGQLType] of Object.entries(this.fields)) {
-			fields[key] = tGQLType.fieldConfig(graphqlTypeMap) as unknown as GraphQLFieldConfig<any, any>;
-		}
-		return fields;
-	}
-
-	override _createGraphQLType({ graphqlTypeMap }: { graphqlTypeMap?: GraphQLTypeMap }) {
-		return super._createGraphQLType({
-			graphqlTypeMap,
-			overrideType: new GraphQLInterfaceType({
-				name: this.name,
-				fields: this.buildFields(graphqlTypeMap),
-				description: this._description,
+		super({
+			name,
+			noWrap: true,
+			graphQLType: new GraphQLInterfaceType({
+				name: name,
+				fields: tGQLInterface.buildFields(fields),
 			}),
 		});
+	}
+
+	private static buildFields<Fields extends tGQLObjectFieldsBase<tGQLOutputTypes>>(
+		_fields: Fields
+	): GraphQLFieldConfigMap<any, any> {
+		const fields: GraphQLFieldConfigMap<any, any> = {};
+		for (const [key, tGQLType] of Object.entries(_fields)) {
+			fields[key] = tGQLType.fieldConfig as unknown as GraphQLFieldConfig<any, any>;
+		}
+		return fields;
 	}
 
 	public implement<

@@ -5,31 +5,26 @@ import { dateScalar, User } from './shared.ts';
 
 describe('tGQL Types', () => {
 	test('Scalar Types', () => {
-		expect(tgql.string()._createGraphQLType().ofType.name).toBe('String');
-		expect(tgql.int()._createGraphQLType().ofType.name).toBe('Int');
-		expect(tgql.float()._createGraphQLType().ofType.name).toBe('Float');
-		expect(tgql.id()._createGraphQLType().ofType.name).toBe('ID');
-		expect(tgql.boolean()._createGraphQLType().ofType.name).toBe('Boolean');
+		expect(tgql.string()._graphQLType.ofType.name).toBe('String');
+		expect(tgql.int()._graphQLType.ofType.name).toBe('Int');
+		expect(tgql.float()._graphQLType.ofType.name).toBe('Float');
+		expect(tgql.id()._graphQLType.ofType.name).toBe('ID');
+		expect(tgql.boolean()._graphQLType.ofType.name).toBe('Boolean');
 
-		expect(tgql.string().nullable()._createGraphQLType().name).toBe('String');
-		expect(tgql.string().nullable()._createGraphQLType()).toBe(GraphQLString);
-		expect(tgql.string().fieldConfig().type).toEqual(new GraphQLNonNull(GraphQLString));
+		expect(tgql.string().nullable()._graphQLType.name).toBe('String');
+		expect(tgql.string().nullable()._graphQLType).toBe(GraphQLString);
+		expect(tgql.string()._graphQLType).toEqual(new GraphQLNonNull(GraphQLString));
 	});
 
 	test('Enum Types', () => {
 		const enumType = tgql.enum('TestEnum', ['A', 'B', 'C']);
 		expect(enumType.name).toBe('TestEnum');
-		expect(
-			enumType
-				._createGraphQLType()
-				.ofType.getValues()
-				.map((v) => v.value)
-		).toEqual(['A', 'B', 'C']);
+		expect(enumType._graphQLType.ofType.getValues().map((v) => v.value)).toEqual(['A', 'B', 'C']);
 	});
 
 	test('Array Types', () => {
 		const arrayType = tgql.list(tgql.string());
-		expect(arrayType._createGraphQLType().ofType.ofType.ofType.name).toBe('String');
+		expect(arrayType._graphQLType.ofType.ofType.ofType.name).toBe('String');
 	});
 
 	test('Object Types', () => {
@@ -42,10 +37,10 @@ describe('tGQL Types', () => {
 		});
 		expect(User.name).toBe('User');
 		expect(User.fields.age._description).toBe('Age in years');
-		expect(User.fields.age._createGraphQLType().ofType).toBe(GraphQLInt);
-		expect(User.fields.weight._createGraphQLType()).toBe(GraphQLFloat);
-		expect(User._createGraphQLType().ofType.name).toBe('User');
-		expect(User.nullable()._createGraphQLType().name).toBe('User');
+		expect(User.fields.age._graphQLType.ofType).toBe(GraphQLInt);
+		expect(User.fields.weight._graphQLType).toBe(GraphQLFloat);
+		expect(User._graphQLType.ofType.name).toBe('User');
+		expect(User.nullable()._graphQLType.name).toBe('User');
 
 		const UserInput = tgql.inputObject('UserInput', {});
 		expect(UserInput._class).toBe('tGQLInputObject');
@@ -70,10 +65,10 @@ describe('tGQL Types', () => {
 	});
 
 	test('Custom Scalar Types', () => {
-		const dateType = tgql.scalar(dateScalar);
+		const dateType = tgql.scalar(dateScalar).nullable();
 		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		const date: tgql.Infer<typeof dateType> = new Date();
-		expect(dateType._createGraphQLType().ofType).toBe(dateScalar);
+		expect(dateType._graphQLType).toBe(dateScalar);
 	});
 
 	test('Interface Types', () => {
@@ -120,11 +115,7 @@ describe('tGQL Types', () => {
 
 		const Cars = tgql.union('Cars', [ElectricCar, GasCar]);
 
-		expect(Cars._createGraphQLType({}).ofType.name).toBe('Cars');
-		expect(
-			Cars._createGraphQLType({})
-				.ofType.getTypes()
-				.map((t) => t.name)
-		).toEqual(['ElectricCar', 'GasCar']);
+		expect(Cars._graphQLType.ofType.name).toBe('Cars');
+		expect(Cars._graphQLType.ofType.getTypes().map((t) => t.name)).toEqual(['ElectricCar', 'GasCar']);
 	});
 });

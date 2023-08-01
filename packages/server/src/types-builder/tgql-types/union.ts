@@ -1,6 +1,7 @@
-import type { GraphQLTypeMap, Infer } from '../../types.ts';
+import type { Infer } from '../../types.ts';
 import { tGQLNonNull } from '../index.ts';
 import type { tGQLObject } from '../index.ts';
+import type { ThunkReadonlyArray } from 'graphql';
 import { GraphQLUnionType } from 'graphql';
 
 export class tGQLUnion<tGQLTypes extends tGQLObject<any>[]> extends tGQLNonNull<
@@ -13,16 +14,13 @@ export class tGQLUnion<tGQLTypes extends tGQLObject<any>[]> extends tGQLNonNull<
 	override readonly _class = 'tGQLUnion' as const;
 
 	constructor(name: string, public types: tGQLTypes) {
-		super({ name });
-	}
-
-	override _createGraphQLType({ graphqlTypeMap }: { graphqlTypeMap?: GraphQLTypeMap }) {
-		return super._createGraphQLType({
-			graphqlTypeMap,
-			overrideType: new GraphQLUnionType({
-				name: this.name,
-				types: this.types.map((tGQLType) => tGQLType._createGraphQLType({ graphqlTypeMap }).ofType),
-				description: this._description,
+		super({
+			name,
+			graphQLType: new GraphQLUnionType({
+				name,
+				types: types.map((tGQLType) =>
+					'ofType' in tGQLType._graphQLType ? tGQLType._graphQLType.ofType : tGQLType._graphQLType
+				) as ThunkReadonlyArray<any>,
 			}),
 		});
 	}

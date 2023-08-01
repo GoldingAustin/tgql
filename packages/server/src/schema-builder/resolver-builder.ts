@@ -1,5 +1,5 @@
 import type { tGQLObject } from '../types-builder/index.ts';
-import type { GraphQLTypeMap, tGQLOutputTypes } from '../types.ts';
+import type { tGQLOutputTypes } from '../types.ts';
 import type { ArgsInput, InferArgs, InferResolverReturn, Middleware, Resolver, ResolverType } from './types.ts';
 import type { GraphQLFieldConfig, GraphQLFieldConfigArgumentMap, GraphQLFieldResolver } from 'graphql';
 
@@ -58,22 +58,22 @@ export class ResolverBuilder<
 		return this as unknown as ResolverBuilder<TContext, TSource, Args, TResult, Type>;
 	}
 
-	private graphqlArgMap(graphqlInputTypeMap: GraphQLTypeMap): GraphQLFieldConfigArgumentMap {
+	private graphqlArgMap(): GraphQLFieldConfigArgumentMap {
 		const builtArgs: GraphQLFieldConfigArgumentMap = {};
 		if (this._args) {
 			for (const [key, gqlType] of Object.entries(this._args)) {
-				builtArgs[key] = gqlType.fieldConfig(graphqlInputTypeMap);
+				builtArgs[key] = gqlType.fieldConfig;
 			}
 		}
 		return builtArgs;
 	}
 
-	private returnType(gqlTypeMap: GraphQLTypeMap): GraphQLFieldConfig<any, any> {
+	private returnType(): GraphQLFieldConfig<any, any> {
 		let returnType: GraphQLFieldConfig<any, any> | undefined;
 		if (this._returns?.name) {
-			returnType = this._returns.fieldConfig(gqlTypeMap) as GraphQLFieldConfig<any, any>;
+			returnType = this._returns.fieldConfig as GraphQLFieldConfig<any, any>;
 		} else if (this._returns?._class === 'tGQLList' && this._returns._tGQLType?.name) {
-			returnType = this._returns.fieldConfig(gqlTypeMap) as GraphQLFieldConfig<any, any>;
+			returnType = this._returns.fieldConfig as GraphQLFieldConfig<any, any>;
 		} else {
 			throw new Error(`No return type specified for resolver ${this._name}`);
 		}
@@ -99,13 +99,11 @@ export class ResolverBuilder<
 	}
 
 	build(
-		gqlTypeMap: GraphQLTypeMap,
-		graphqlInputTypeMap: GraphQLTypeMap,
 		globalMiddleware: Middleware<any, any, any, any>[] = []
 	): GraphQLFieldConfig<TSource, TContext, InferArgs<TArgs>> {
 		return {
-			type: this.returnType(gqlTypeMap).type,
-			args: this.graphqlArgMap(graphqlInputTypeMap),
+			type: this.returnType().type,
+			args: this.graphqlArgMap(),
 			resolve: this.createResolverFn(globalMiddleware),
 			description: this._description,
 			deprecationReason: this._deprecationReason,

@@ -1,4 +1,4 @@
-import { GraphQLScalarType, Kind } from 'graphql/index';
+import { GraphQLScalarType, Kind } from 'graphql';
 import { tgql } from '../src';
 
 export const dateScalar = new GraphQLScalarType({
