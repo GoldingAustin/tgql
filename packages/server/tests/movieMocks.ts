@@ -218,7 +218,7 @@ export const setupMovieTests = () => {
 	return {
 		createSchema: () => {
 			const tgqlResolvers = tgql.registerResolvers({ movie, movies, castMember, cast, studio, studios });
-			return tgqlResolvers.createSchema();
+			return tgqlResolvers;
 		},
 		createMocks,
 	};

@@ -1,11 +1,8 @@
-import type { GraphQLTypeMap } from '../types.ts';
 import type { ResolverMap, ResolverType } from './types.ts';
 import { GraphQLObjectType } from 'graphql';
 import { GraphQLSchema } from 'graphql';
 
 export class SchemaBuilder<Resolvers extends ResolverMap<ResolverType>> {
-	public graphqlTypeMap: GraphQLTypeMap = {};
-	public graphqlInputTypeMap: GraphQLTypeMap = {};
 	public graphQLSchema!: GraphQLSchema;
 	constructor(public resolvers: Resolvers) {
 		this.resolvers = resolvers;

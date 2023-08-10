@@ -15,8 +15,8 @@ export class tGQLObject<Fields extends tGQLObjectFieldsBase<tGQLOutputTypes>, Na
 > {
 	declare name: Name;
 	override readonly _class = 'tGQLObject' as const;
-	public resolvers?: (builder: FieldResolverBuilder<any, this>) => Record<string, tGQLFieldResolver<any, any, any>>;
-	constructor(name: string, public fields: Fields, private interfaces: tGQLInterface<any>[] = []) {
+	public resolvers?: Record<string, tGQLFieldResolver<any, any, any>>;
+	constructor(name: string, public fields: Fields, private interfaces: tGQLInterface<any, any>[] = []) {
 		super({
 			name,
 			graphQLType: new GraphQLObjectType({
@@ -44,8 +44,8 @@ export class tGQLObject<Fields extends tGQLObjectFieldsBase<tGQLOutputTypes>, Na
 			tGQLFieldResolver<tGQLOutputTypes, any, any>
 		>
 	>(fields: (builder: FieldResolverBuilder<tContext, this>) => FieldReturn) {
-		this.resolvers = fields;
-		const newFields = { ...this.fields, ...this.resolvers(new FieldResolverBuilder(this as any)) };
+		this.resolvers = fields(new FieldResolverBuilder<tContext, this>(this as any));
+		const newFields = { ...this.fields, ...this.resolvers };
 		const newObject = new GraphQLObjectType({
 			name: this.name,
 			fields: tGQLObject.buildFields(newFields),
@@ -53,7 +53,12 @@ export class tGQLObject<Fields extends tGQLObjectFieldsBase<tGQLOutputTypes>, Na
 		// @ts-ignore
 		// Reassign the current graphQLType fields to the new fields with the resolvers
 		this._graphQLType.ofType._fields = newObject._fields;
-		return this;
+		return this as unknown as tGQLObject<
+			{
+				[K in keyof (Fields & FieldReturn)]: (Fields & FieldReturn)[K];
+			},
+			Name
+		>;
 	}
 
 	public toInput<NewName extends string>(

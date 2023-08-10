@@ -21,7 +21,21 @@
 	"license": "MIT",
 	"main": "./dist/index.js",
 	"types": "./src/index.ts",
-	"module": "./dist/index.mjs",
+	"exports": {
+		"bun": {
+			"default": "./src/index.ts",
+			"require": "./dist/index.js"
+		},
+		"node": {
+			"default": "./dist/index.mjs",
+			"require": "./dist/index.js"
+		},
+		"default": {
+			"default": "./dist/index.mjs",
+			"require": "./dist/index.js"
+		},
+		"types": "./src/index.ts"
+	},
 	"files": [
 		"dist",
 		"src",

@@ -1,4 +1,4 @@
-import type { ArgsInput } from '../../server/src/schema-builder/types.ts';
+import type { ArgsInput, ResolverType } from '../../server/src/schema-builder/types.ts';
 import type { tGQLObjectFieldsBase, tGQLTypes } from '../../server/src/types.ts';
 import { createProxy } from './fragment-builder.ts';
 
@@ -27,7 +27,7 @@ const buildGraphqlShape = <Shape extends GQLShape<any>>(shape: Shape, level = 0)
 };
 const createArgsString = (args: tGQLObjectFieldsBase): string => {
 	return `(${Object.keys(args)
-		.map((key) => `$${key}: ${args[key]._graphQLType.name}${args[key]._nullable ? '' : '!'}`)
+		.map((key) => `$${key}: ${args[key]._graphQLType.toString()}`)
 		.join(', ')})`;
 };
 const createArgsCallString = (args: ArgsInput): string => {
@@ -55,7 +55,7 @@ const createGraphqlFragment = <Shape extends GQLShape<any>>(shape: Shape, type: 
 };
 
 type QueryTemplate<Name extends string, Args, FieldArgs> = {
-	type: 'Query' | 'Mutation' | 'Subscription';
+	type: ResolverType;
 	name: Name;
 	args: Args;
 	fieldArgs: FieldArgs;

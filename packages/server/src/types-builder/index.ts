@@ -4,6 +4,7 @@ export { tGQLNullable, tGQLNullableBase, tGQLNullableWithDefault } from './base/
 export { tGQLList } from './tgql-types/list.ts';
 export { tGQLFieldResolver } from './tgql-types/field-resolver.ts';
 export { tGQLInterface } from './tgql-types/interface.ts';
+export { tGQLUnion } from './tgql-types/union.ts';
 export { tGQLObject } from './tgql-types/object.ts';
 export { tGQLInputObject } from './tgql-types/input-object.ts';
 export { tGQLBool, tGQLFloat, tGQLID, tGQLInt, tGQLString } from './tgql-types/scalars.ts';

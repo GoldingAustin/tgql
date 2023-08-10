@@ -3,7 +3,7 @@ import type { SchemaBuilder } from '../../server/src/schema-builder/schema-build
 import type { InferArgs, ResolverMap, ResolverType } from '../../server/src/schema-builder/types.ts';
 import type { Builder } from './fragment-builder.ts';
 import type { Infer } from '../../server/src/types.ts';
-import type { tGQLObject } from '../../server/src/types-builder';
+import type { tGQLObject } from '../../server/src/types-builder/index.ts';
 import { graphqlStringBuilder } from './graphql-string-builder.ts';
 
 type ResolverClientBuilder<Resolver extends ResolverBuilder<any, any, any, any, any>> = {

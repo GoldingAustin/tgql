@@ -1,6 +1,11 @@
 import type { Expand, Infer, tGQLBaseTypeAny, tGQLObjectFieldsBase, tGQLTypes } from '../../server/src/types.ts';
-import type { tGQLFieldResolver, tGQLList, tGQLNullable, tGQLObject } from '../../server/src/types-builder';
-import type { tGQLUnion } from '../../server/src/types-builder/tgql-types/union.ts';
+import type {
+	tGQLFieldResolver,
+	tGQLList,
+	tGQLNullable,
+	tGQLObject,
+	tGQLUnion,
+} from '../../server/src/types-builder/index.ts';
 import type { ArgsInput, InferArgs } from '../../server/src/schema-builder/types.ts';
 import type { GqlTemplateType } from './graphql-string-builder.ts';
 import { endBuilder } from './graphql-string-builder.ts';
@@ -49,12 +54,9 @@ export type DynamicChainedProps<
 			Expand<Omit<Props, Key>>
 	  >;
 export type DynamicChained<Accumulated extends object, Inputs extends object, Props extends tGQLObjectFieldsBase> = {
-	[Key in keyof Props | '$build' as GetSubType<Props[Key]> extends tGQLObject<any, any> ? Key : Key]: DynamicChainedProps<
-		Accumulated,
-		Inputs,
-		Props,
-		Key
-	>;
+	[Key in keyof Props | '$build' as GetSubType<Props[Key]> extends tGQLObject<any, any>
+		? Key
+		: Key]: DynamicChainedProps<Accumulated, Inputs, Props, Key>;
 };
 export type Builder<
 	tGQLType extends tGQLBaseTypeAny,
