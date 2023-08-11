@@ -2,7 +2,7 @@ import type {
 	tGQLBase,
 	tGQLBool,
 	tGQLEnum,
-	tGQLFieldResolver,
+	tGQLResolver,
 	tGQLFloat,
 	tGQLID,
 	tGQLInputObject,
@@ -38,7 +38,7 @@ export type tGQLOutputTypes =
 	| tGQLNullable<tGQLOutputTypes>
 	| tGQLInterface<any, any>
 	| tGQLUnion<tGQLObject<any, any>[], any>
-	| tGQLFieldResolver<any, any, any>;
+	| tGQLResolver<any, any, any, any, any>;
 
 export type tGQLInputTypes =
 	| tGQLBaseTypes
@@ -73,5 +73,3 @@ export type UndefinedAsOptional<T extends tGQLObjectFieldsBase, ComparisonType =
 
 // type that removes or null from a type
 export type RemoveNull<T> = Exclude<T, null>;
-
-export type UnionToIntersection<U> = (U extends any ? (k: U) => void : never) extends (k: infer I) => void ? I : never;

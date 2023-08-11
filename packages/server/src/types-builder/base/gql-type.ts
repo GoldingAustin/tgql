@@ -1,5 +1,6 @@
 import type { tGQLBaseTypeAny } from '../../types.ts';
 import type { GraphQLType as GraphQLTypes } from 'graphql';
+import { isNonNullType } from 'graphql';
 
 export abstract class tGQLBase<
 	tGQLType extends tGQLBaseTypeAny,
@@ -26,17 +27,19 @@ export abstract class tGQLBase<
 
 	deprecated(reason: string): this {
 		this._deprecationReason = reason;
-		this._graphQLType.deprecationReason = reason;
+		const baseGQLType = getBaseGQLType(this);
+		if (baseGQLType && 'deprecationReason' in baseGQLType) baseGQLType.deprecationReason = reason;
 		return this;
 	}
 
 	description(description: string): this {
 		this._description = description;
-		this._graphQLType.description = description;
+		const baseGQLType = getBaseGQLType(this);
+		if (baseGQLType && 'description' in baseGQLType) baseGQLType.description = description;
 		return this;
 	}
 
-	get fieldConfig(): any {
+	public get fieldConfig(): any {
 		return {
 			type: this._graphQLType,
 			description: this._description,
@@ -44,3 +47,11 @@ export abstract class tGQLBase<
 		};
 	}
 }
+
+export const getBaseGQLType = <T extends tGQLBase<any, any, any, any, any>, ReturnType extends GraphQLTypes>(
+	tGQLType: T
+): ReturnType | undefined => {
+	if (!tGQLType._graphQLType) return undefined;
+	if (isNonNullType(tGQLType._graphQLType)) return tGQLType._graphQLType.ofType as ReturnType;
+	else return tGQLType._graphQLType;
+};

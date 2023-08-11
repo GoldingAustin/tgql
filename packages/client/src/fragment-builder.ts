@@ -1,18 +1,10 @@
-import type { Expand, Infer, tGQLBaseTypeAny, tGQLObjectFieldsBase, tGQLTypes } from '../../server/src/types.ts';
-import type {
-	tGQLFieldResolver,
-	tGQLList,
-	tGQLNullable,
-	tGQLObject,
-	tGQLUnion,
-} from '../../server/src/types-builder/index.ts';
-import type { ArgsInput, InferArgs } from '../../server/src/schema-builder/types.ts';
 import type { GqlTemplateType } from './graphql-string-builder.ts';
 import { endBuilder } from './graphql-string-builder.ts';
+import type { tgql } from '@tgql/server';
 
-export type GetSubType<Type extends tGQLBaseTypeAny> = Type extends tGQLNullable<infer T>
+export type GetSubType<Type extends tgql.tGQLBaseTypeAny> = Type extends tgql.tGQLNullable<infer T>
 	? GetSubType<T>
-	: Type extends tGQLList<infer T>
+	: Type extends tgql.tGQLList<infer T>
 	? GetSubType<T>
 	: Type;
 type EndBuilder<Inputs extends object, Return extends object> = () => EndBuilderOptions<Inputs, Return>;
@@ -24,57 +16,65 @@ export type EndBuilderOptions<Inputs extends object, Return extends object> = {
 	readonly ReturnType: Return;
 };
 export type ReturnBuilder<
-	Builder extends tGQLObjectFieldsBase,
-	Props extends tGQLObjectFieldsBase,
+	Builder extends tgql.tGQLObjectFieldsBase,
+	Props extends tgql.tGQLObjectFieldsBase,
 	Key extends keyof Props,
 	Accumulated extends object,
 	Inputs extends object
 > = <SubBuilder extends <Acc extends object, Inp extends object>(builder: DynamicChained<Acc, Inp, Builder>) => any>(
 	b: SubBuilder
 ) => ReturnType<SubBuilder> extends DynamicChained<infer Acc, infer Args, any>
-	? DynamicChained<Expand<Accumulated & Record<Key, Acc>>, Expand<Inputs & Args>, Expand<Omit<Props, Key>>>
+	? DynamicChained<
+			tgql.Expand<Accumulated & Record<Key, Acc>>,
+			tgql.Expand<Inputs & Args>,
+			tgql.Expand<Omit<Props, Key>>
+	  >
 	: never;
 
 export type DynamicChainedProps<
 	Accumulated extends object,
 	Inputs extends object,
-	Props extends tGQLObjectFieldsBase,
+	Props extends tgql.tGQLObjectFieldsBase,
 	Key extends keyof Props
 > = Key extends '$build'
 	? EndBuilder<Inputs, Accumulated>
-	: GetSubType<Props[Key]> extends tGQLObject<infer Fields, any>
+	: GetSubType<Props[Key]> extends tgql.tGQLObject<infer Fields, any>
 	? ReturnBuilder<Fields, Props, Key, Accumulated, Inputs>
 	: DynamicChained<
-			Expand<Accumulated & Record<Key, Infer<Props[Key]>>>,
-			Props[Key] extends tGQLFieldResolver<any, infer Args, any>
-				? Args extends ArgsInput
-					? Expand<Inputs & InferArgs<Args>>
+			tgql.Expand<Accumulated & Record<Key, tgql.Infer<Props[Key]>>>,
+			Props[Key] extends tgql.tGQLResolver<any, any, infer Args, any, any>
+				? Args extends tgql.ArgsInput
+					? tgql.Expand<Inputs & tgql.InferArgs<Args>>
 					: Inputs
 				: Inputs,
-			Expand<Omit<Props, Key>>
+			tgql.Expand<Omit<Props, Key>>
 	  >;
-export type DynamicChained<Accumulated extends object, Inputs extends object, Props extends tGQLObjectFieldsBase> = {
-	[Key in keyof Props | '$build' as GetSubType<Props[Key]> extends tGQLObject<any, any>
+export type DynamicChained<
+	Accumulated extends object,
+	Inputs extends object,
+	Props extends tgql.tGQLObjectFieldsBase
+> = {
+	[Key in keyof Props | '$build' as GetSubType<Props[Key]> extends tgql.tGQLObject<any, any>
 		? Key
 		: Key]: DynamicChainedProps<Accumulated, Inputs, Props, Key>;
 };
 export type Builder<
-	tGQLType extends tGQLBaseTypeAny,
+	tGQLType extends tgql.tGQLBaseTypeAny,
 	Accumulated extends object,
 	Inputs extends object
-> = tGQLType extends tGQLObject<infer Fields, any>
+> = tGQLType extends tgql.tGQLObject<infer Fields, any>
 	? DynamicChained<Accumulated, Inputs, Fields>
-	: tGQLType extends tGQLUnion<infer O, any>
-	? O extends tGQLObject<infer Fields, any>
+	: tGQLType extends tgql.tGQLUnion<infer O, any>
+	? O extends tgql.tGQLObject<infer Fields, any>
 		? DynamicChained<Accumulated, Inputs, Fields>
 		: never
 	: never;
 
-type ChainObject = {
+export type ChainObject = {
 	[k: string]: ChainObject | true;
 };
 
-const getQueryProperty = <T extends tGQLTypes>(type: T, path: string[]): tGQLTypes => {
+const getQueryProperty = <T extends tgql.tGQLTypes>(type: T, path: string[]): tgql.tGQLTypes => {
 	if ((type?._class === 'tGQLNullable' || type?._class === 'tGQLNullableWithDefault') && type?._tGQLType) {
 		return getQueryProperty(type._tGQLType, path);
 	}
@@ -94,7 +94,7 @@ const getQueryProperty = <T extends tGQLTypes>(type: T, path: string[]): tGQLTyp
 	return type;
 };
 
-export function createProxy<Type extends GqlTemplateType<any, any, any>, tGQLType extends tGQLTypes>(
+export function createProxy<Type extends GqlTemplateType<any, any, any>, tGQLType extends tgql.tGQLTypes>(
 	obj: ChainObject = {},
 	shape: any = {},
 	type: Type,
@@ -125,7 +125,7 @@ export function createProxy<Type extends GqlTemplateType<any, any, any>, tGQLTyp
 			} else {
 				if (!shape[property as string]) {
 					shape[property as string] = currentType;
-					if (currentType?._class === 'tGQLFieldResolver') {
+					if (currentType?._class === 'tGQLResolver') {
 						type.fieldArgs = { ...type.fieldArgs, ...currentType._args };
 					}
 				}

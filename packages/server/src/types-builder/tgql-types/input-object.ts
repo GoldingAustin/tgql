@@ -1,5 +1,5 @@
 import type { Expand, tGQLInputTypes, ToOptional, ToRequired, UndefinedAsOptional } from '../../types.ts';
-import type { tGQLFieldResolver, tGQLNullableBase, tGQLObject } from '../index.ts';
+import type { tGQLNullableBase, tGQLObject, tGQLResolver } from '../index.ts';
 import { tGQLNonNull } from '../index.ts';
 import type { GraphQLInputFieldConfig, GraphQLInputFieldConfigMap } from 'graphql';
 import { GraphQLInputObjectType } from 'graphql';
@@ -97,8 +97,8 @@ class ToInputObject<
 		const newFields: Record<string, tGQLInputTypes | tGQLObject<any, any>> = {};
 		for (const key in fields) {
 			if (
-				fields[key]._class === 'tGQLFieldResolver' ||
-				(fields[key]._nullable && fields[key]._tGQLType._class === 'tGQLFieldResolver')
+				fields[key]._class === 'tGQLResolver' ||
+				(fields[key]._nullable && fields[key]._tGQLType._class === 'tGQLResolver')
 			) {
 				continue;
 			}
@@ -124,7 +124,9 @@ class ToInputObject<
 }
 
 type GetMatchingKeys<T extends tGQLObject<any, any>['fields']> = {
-	[K in keyof T as T[K] extends tGQLFieldResolver<any, any, any> | tGQLNullableBase<tGQLFieldResolver<any, any, any>>
+	[K in keyof T as T[K] extends
+		| tGQLResolver<any, any, any, any, any>
+		| tGQLNullableBase<tGQLResolver<any, any, any, any, any>>
 		? never
 		: K]: T[K];
 };

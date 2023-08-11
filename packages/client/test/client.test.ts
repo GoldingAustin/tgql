@@ -1,5 +1,5 @@
 import { createClient } from '../src';
-import { tgql } from '../../server';
+import { tgql } from '@tgql/server';
 import { describe, expect, test } from 'bun:test';
 
 const Food = tgql
@@ -10,11 +10,11 @@ const Food = tgql
 		calories: tgql.int(),
 	})
 	.fieldResolvers((builder) => ({
-		servings: builder.fieldResolver(
-			tgql.int(),
-			{ portions: tgql.int() },
-			(food, { portions }) => food.calories * portions
-		),
+		servings: builder
+			.fieldResolver()
+			.returns(tgql.int())
+			.args({ portions: tgql.int() })
+			.resolver(async ({ source: food, args: { portions } }) => food.calories * portions),
 	}));
 
 const Meal = tgql.object('Meal', {
@@ -37,11 +37,11 @@ const User = tgql
 		favoriteMeals: tgql.list(Meal).nullable(),
 	})
 	.fieldResolvers((builder) => ({
-		fullName: builder.fieldResolver(
-			tgql.string().nullable(),
-			{ middle: tgql.string() },
-			(user, { middle }) => `${user.firstName} ${user.lastName} ${middle}`
-		),
+		fullName: builder
+			.fieldResolver()
+			.returns(tgql.string().nullable())
+			.args({ middle: tgql.string() })
+			.resolver(async ({ source: user, args: { middle } }) => `${user.firstName} ${user.lastName} ${middle}`),
 	}));
 
 const Vehicle = tgql.interface('Vehicle', {

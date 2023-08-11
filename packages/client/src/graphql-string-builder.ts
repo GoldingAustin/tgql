@@ -1,9 +1,8 @@
-import type { ArgsInput, ResolverType } from '../../server/src/schema-builder/types.ts';
-import type { tGQLObjectFieldsBase, tGQLTypes } from '../../server/src/types.ts';
 import { createProxy } from './fragment-builder.ts';
+import type { tgql } from '@tgql/server';
 
 interface GQLShape<Args> {
-	[key: string]: tGQLTypes | GQLShape<Args>;
+	[key: string]: tgql.tGQLTypes | GQLShape<Args>;
 }
 
 const prependTab = (numTabs: number, str: string) => `${'\t'.repeat(numTabs)}${str}`;
@@ -11,7 +10,7 @@ const buildGraphqlShape = <Shape extends GQLShape<any>>(shape: Shape, level = 0)
 	return Object.keys(shape).flatMap((key) => {
 		const currentProperty = shape[key];
 		if (currentProperty?._class) {
-			if (currentProperty?._class === 'tGQLFieldResolver') {
+			if (currentProperty?._class === 'tGQLResolver') {
 				return [prependTab(level, `${key}${createArgsCallString(currentProperty._args)}`)];
 			} else {
 				return prependTab(level, key);
@@ -25,12 +24,12 @@ const buildGraphqlShape = <Shape extends GQLShape<any>>(shape: Shape, level = 0)
 		}
 	});
 };
-const createArgsString = (args: tGQLObjectFieldsBase): string => {
+const createArgsString = (args: tgql.tGQLObjectFieldsBase): string => {
 	return `(${Object.keys(args)
 		.map((key) => `$${key}: ${args[key]._graphQLType.toString()}`)
 		.join(', ')})`;
 };
-const createArgsCallString = (args: ArgsInput): string => {
+const createArgsCallString = (args: tgql.ArgsInput): string => {
 	return `(${Object.keys(args)
 		.map((key) => `${key}: $${key}`)
 		.join(', ')})`;
@@ -55,7 +54,7 @@ const createGraphqlFragment = <Shape extends GQLShape<any>>(shape: Shape, type: 
 };
 
 type QueryTemplate<Name extends string, Args, FieldArgs> = {
-	type: ResolverType;
+	type: tgql.ResolverType;
 	name: Name;
 	args: Args;
 	fieldArgs: FieldArgs;
@@ -70,7 +69,7 @@ export type GqlTemplateType<Name extends string, Args, FieldArgs> =
 	| QueryTemplate<Name, Args, FieldArgs>
 	| FragmentTemplate<Name, FieldArgs>;
 export const graphqlStringBuilder = <
-	tGQLType extends tGQLTypes,
+	tGQLType extends tgql.tGQLTypes,
 	Name extends string,
 	Args extends object,
 	FieldArgs extends object

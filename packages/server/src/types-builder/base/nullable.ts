@@ -20,7 +20,7 @@ export abstract class tGQLNullableBase<
 		});
 	}
 
-	override get fieldConfig(): any {
+	public override get fieldConfig(): any {
 		const fieldConf = this._tGQLType.fieldConfig;
 		return {
 			...fieldConf,
@@ -45,9 +45,9 @@ export class tGQLNullableWithDefault<tGQLType extends tGQLBaseTypeAny> extends t
 	override _nullable = true;
 	_defaultValue!: Infer<tGQLType>;
 
-	override get fieldConfig(): any {
+	public override get fieldConfig(): any {
 		return {
-			...super.fieldConfig,
+			...this.fieldConfig,
 			defaultValue: this._defaultValue,
 		};
 	}

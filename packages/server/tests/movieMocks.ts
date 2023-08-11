@@ -148,20 +148,31 @@ export const setupMovieTests = () => {
 	});
 
 	Movie.fieldResolvers<Context>((builder) => ({
-		cast: builder.fieldResolver(tgql.list(CastMember), (movie, _args, context) => {
-			const associations = context.movieCast.filter((casting) => casting.movieId === movie.id);
-			return context.cast.filter((cast) => !!associations.find((association) => association.castMemberId === cast.id));
-		}),
-		studio: builder.fieldResolver(Studio, (movie, _args, context) => {
-			return context.studios.find((studio) => studio.id === movie.studioId) as (typeof context)['studios'][number];
-		}),
+		cast: builder
+			.fieldResolver()
+			.returns(tgql.list(CastMember))
+			.resolver(async ({ source: movie, context }) => {
+				const associations = context.movieCast.filter((casting) => casting.movieId === movie.id);
+				return context.cast.filter(
+					(cast) => !!associations.find((association) => association.castMemberId === cast.id)
+				);
+			}),
+		studio: builder
+			.fieldResolver()
+			.returns(Studio)
+			.resolver(async ({ source: movie, context }) => {
+				return context.studios.find((studio) => studio.id === movie.studioId) as (typeof context)['studios'][number];
+			}),
 	}));
 
 	CastMember.fieldResolvers<Context>((builder) => ({
-		movies: builder.fieldResolver(tgql.list(Movie), (castMember, _args, context) => {
-			const associations = context.movieCast.filter((casting) => castMember.id === casting.castMemberId);
-			return context.movies.filter((movie) => !!associations.find((association) => association.movieId === movie.id));
-		}),
+		movies: builder
+			.fieldResolver()
+			.returns(tgql.list(Movie))
+			.resolver(async ({ source: castMember, context }) => {
+				const associations = context.movieCast.filter((casting) => castMember.id === casting.castMemberId);
+				return context.movies.filter((movie) => !!associations.find((association) => association.movieId === movie.id));
+			}),
 	}));
 
 	const findMovie = async (id: string, context: Context) => {
