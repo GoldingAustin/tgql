@@ -47,7 +47,7 @@ export class tGQLNullableWithDefault<tGQLType extends tGQLBaseTypeAny> extends t
 
 	public override get fieldConfig(): any {
 		return {
-			...this.fieldConfig,
+			...super.fieldConfig,
 			defaultValue: this._defaultValue,
 		};
 	}
