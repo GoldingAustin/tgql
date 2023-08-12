@@ -37,7 +37,7 @@ type SchemaBuilderToClient<TSchemaBuilder extends tgql.SchemaBuilder<any>> = {
 				? Ret['name']
 				: never
 			: never]: {
-			selectFragment: <Input extends object, Returns extends object>(
+			select: <Input extends object, Returns extends object>(
 				name: string
 			) => Builder<TSchemaBuilder['resolvers'][TKey]['_returns'], Returns, Input>;
 			type: tgql.Infer<TSchemaBuilder['resolvers'][TKey]['_returns']>;
@@ -73,7 +73,7 @@ function createResolverBuilderToClient<Resolvers extends tgql.ResolverMap<tgql.R
 		else obj.query[key] = resolverToBuilder(resolver, key);
 		if (resolver._returns?.name) {
 			obj.types[resolver._returns.name] = {
-				selectFragment: <Name extends string>(name: Name) =>
+				select: <Name extends string>(name: Name) =>
 					graphqlStringBuilder(resolver._returns, {
 						type: 'Fragment',
 						name: name,

@@ -10,7 +10,7 @@ on:
       - '**'
 
 jobs:
-  build:
+  build-test-typecheck:
     runs-on: macos-latest
     steps:
       - name: Checkout
@@ -23,3 +23,6 @@ jobs:
 
       - name: Test
         run: bun run test
+
+      - name: Type Check
+        run: bun run typecheck

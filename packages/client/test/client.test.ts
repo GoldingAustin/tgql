@@ -136,7 +136,7 @@ const query = client.query.user
 
 // prettier-ignore
 const frag = client.types.User
-	.selectFragment('UserFragment')
+	.select('UserFragment')
 	.id
 	.weight
 	.firstName
