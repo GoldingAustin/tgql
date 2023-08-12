@@ -20,12 +20,13 @@ export type ReturnBuilder<
 	Props extends tgql.tGQLObjectFieldsBase,
 	Key extends keyof Props,
 	Accumulated extends object,
-	Inputs extends object
+	Inputs extends object,
+	SubList extends boolean = false
 > = <SubBuilder extends <Acc extends object, Inp extends object>(builder: DynamicChained<Acc, Inp, Builder>) => any>(
 	b: SubBuilder
 ) => ReturnType<SubBuilder> extends DynamicChained<infer Acc, infer Args, any>
 	? DynamicChained<
-			tgql.Expand<Accumulated & Record<Key, Acc>>,
+			tgql.Expand<Accumulated & Record<Key, SubList extends true ? Acc[] : Acc>>,
 			tgql.Expand<Inputs & Args>,
 			tgql.Expand<Omit<Props, Key>>
 	  >
@@ -39,7 +40,7 @@ export type DynamicChainedProps<
 > = Key extends '$build'
 	? EndBuilder<Inputs, Accumulated>
 	: GetSubType<Props[Key]> extends tgql.tGQLObject<infer Fields, any>
-	? ReturnBuilder<Fields, Props, Key, Accumulated, Inputs>
+	? ReturnBuilder<Fields, Props, Key, Accumulated, Inputs, Props[Key] extends tgql.tGQLList<any> ? true : false>
 	: DynamicChained<
 			tgql.Expand<Accumulated & Record<Key, tgql.Infer<Props[Key]>>>,
 			Props[Key] extends tgql.tGQLResolver<any, any, infer Args, any, any>
