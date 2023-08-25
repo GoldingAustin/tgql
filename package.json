@@ -24,6 +24,7 @@
 		"publish": "lerna publish from-package",
 		"typecheck": "lerna run typecheck",
 		"test": "bun test",
+		"version": "lerna version --no-private",
 		"format": "prettier --write . --ignore-path .gitignore",
 		"lint": "eslint --fix ./packages --ignore-path .gitignore",
 		"dev": "bun --bun --watch temp/index.ts"
