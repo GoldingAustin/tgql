@@ -22,7 +22,9 @@
 	"scripts": {
 		"build": "lerna run build",
 		"publish": "lerna publish from-package",
+		"typecheck": "lerna run typecheck",
 		"test": "bun test",
+		"version": "lerna version --no-private",
 		"format": "prettier --write . --ignore-path .gitignore",
 		"lint": "eslint --fix ./packages --ignore-path .gitignore",
 		"dev": "bun --bun --watch temp/index.ts"
@@ -44,7 +46,7 @@
 		"lerna": "^7.1.1",
 		"prettier": "^2.8.8",
 		"tsup": "^7.1.0",
-		"typescript": "^5.1.3"
+		"typescript": "^5.1.6"
 	},
 	"prettier": {
 		"printWidth": 120,

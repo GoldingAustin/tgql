@@ -1,13 +1,15 @@
 import type { GraphQLNullCheck, Infer, tGQLBaseTypeAny } from '../../types.ts';
 import { tGQLBase } from '../index.ts';
 
-export abstract class tGQLNullableBase<tGQLType extends tGQLBase<any, any, any>> extends tGQLBase<
+export abstract class tGQLNullableBase<
+	tGQLType extends tGQLBaseTypeAny,
+	WithDefault extends boolean = false
+> extends tGQLBase<
 	tGQLType,
-	Infer<tGQLType> | undefined,
+	WithDefault extends true ? Infer<tGQLType> : Infer<tGQLType> | undefined,
 	GraphQLNullCheck<tGQLType['_graphQLType']>
 > {
 	override _nullable = true;
-	abstract readonly _class: string;
 
 	constructor(tGQLType: tGQLType) {
 		tGQLType._nullable = true;
@@ -18,7 +20,7 @@ export abstract class tGQLNullableBase<tGQLType extends tGQLBase<any, any, any>>
 		});
 	}
 
-	override get fieldConfig(): any {
+	public override get fieldConfig(): any {
 		const fieldConf = this._tGQLType.fieldConfig;
 		return {
 			...fieldConf,
@@ -38,13 +40,12 @@ export class tGQLNullable<tGQLType extends tGQLBaseTypeAny> extends tGQLNullable
 	}
 }
 
-export class tGQLNullableWithDefault<tGQLType extends tGQLBaseTypeAny> extends tGQLNullableBase<tGQLType> {
+export class tGQLNullableWithDefault<tGQLType extends tGQLBaseTypeAny> extends tGQLNullableBase<tGQLType, true> {
 	override readonly _class = 'tGQLNullableWithDefault' as const;
 	override _nullable = true;
-	declare _type: Infer<tGQLType>;
 	_defaultValue!: Infer<tGQLType>;
 
-	override get fieldConfig(): any {
+	public override get fieldConfig(): any {
 		return {
 			...super.fieldConfig,
 			defaultValue: this._defaultValue,

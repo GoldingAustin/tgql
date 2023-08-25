@@ -37,10 +37,13 @@ export const User = tgql
 		birthdate: tgql.scalar(dateScalar),
 	})
 	.fieldResolvers((builder) => ({
-		fullName: builder.fieldResolver(tgql.string(), (user) => `${user.firstName} ${user.lastName}`),
-		fullMiddleName: builder.fieldResolver(
-			tgql.string(),
-			{ middle: tgql.string() },
-			(user, args) => `${user.firstName} ${user.lastName} ${args.middle}`
-		),
+		fullName: builder
+			.fieldResolver()
+			.returns(tgql.string())
+			.resolver(async ({ source: user }) => `${user.firstName} ${user.lastName}`),
+		fullMiddleName: builder
+			.fieldResolver()
+			.returns(tgql.string())
+			.args({ middle: tgql.string() })
+			.resolver(async ({ source: user, args }) => `${user.firstName} ${user.lastName} ${args.middle}`),
 	}));

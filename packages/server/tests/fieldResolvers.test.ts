@@ -7,7 +7,7 @@ describe('tGQL Field Resolvers', () => {
 		const { createMocks, createSchema } = setupMovieTests();
 		const schema = createSchema();
 		const { data } = await graphql({
-			schema,
+			schema: schema.graphQLSchema,
 			source: String`			
 query Movie {
 	movie(id: "cowboys_aliens") {
@@ -40,7 +40,7 @@ query Movie {
 		const { createMocks, createSchema } = setupMovieTests();
 		const schema = createSchema();
 		const { data } = await graphql({
-			schema,
+			schema: schema.graphQLSchema,
 			source: String`
 	query Movie {
 		movie(id: "cowboys_aliens") {
@@ -142,6 +142,6 @@ type Studio {
 }
 `;
 		expectedSchema = expectedSchema.trim();
-		expect(printSchema(schema)).toMatch(expectedSchema);
+		expect(printSchema(schema.graphQLSchema)).toMatch(expectedSchema);
 	});
 });

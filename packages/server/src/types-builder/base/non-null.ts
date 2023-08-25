@@ -9,8 +9,6 @@ export abstract class tGQLNonNull<
 	GraphQLType extends GraphQLTypes
 > extends tGQLBase<tGQLType, TypescriptType, GraphQLNonNull<GraphQLType>> {
 	override _nullable = false;
-	abstract readonly _class: string;
-
 	constructor({
 		tGQLType,
 		graphQLType,

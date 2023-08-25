@@ -4,12 +4,11 @@ import { tGQLObject } from './object.ts';
 import type { GraphQLFieldConfig, GraphQLFieldConfigMap } from 'graphql';
 import { GraphQLInterfaceType } from 'graphql';
 
-export class tGQLInterface<Fields extends tGQLObjectFieldsBase<tGQLOutputTypes>> extends tGQLNonNull<
-	tGQLInterface<Fields>,
-	Expand<UndefinedAsOptional<Fields>>,
-	GraphQLInterfaceType
-> {
-	declare name: string;
+export class tGQLInterface<
+	Fields extends tGQLObjectFieldsBase<tGQLOutputTypes>,
+	Name extends string
+> extends tGQLNonNull<tGQLInterface<Fields, Name>, Expand<UndefinedAsOptional<Fields>>, GraphQLInterfaceType> {
+	declare name: Name;
 	override readonly _class = 'tGQLInterface' as const;
 	constructor(name: string, public fields: Fields) {
 		super({
@@ -35,10 +34,12 @@ export class tGQLInterface<Fields extends tGQLObjectFieldsBase<tGQLOutputTypes>>
 	public implement<
 		T extends tGQLObjectFieldsBase<tGQLOutputTypes> & {
 			[K in keyof Fields]?: never;
-		}
-	>(name: string, fields: T): tGQLObject<Expand<Fields & Omit<T, keyof Fields>>> {
+		},
+		ObjectName extends string
+	>(name: ObjectName, fields: T): tGQLObject<Expand<Fields & Omit<T, keyof Fields>>, ObjectName> {
 		return new tGQLObject(name, { ...fields, ...this.fields }, [this]) as unknown as tGQLObject<
-			Expand<Fields & Omit<T, keyof Fields>>
+			Expand<Fields & Omit<T, keyof Fields>>,
+			ObjectName
 		>;
 	}
 }

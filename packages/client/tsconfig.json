@@ -9,11 +9,13 @@
 		"allowImportingTsExtensions": true,
 		"moduleDetection": "force",
 		"noErrorTruncation": true,
-		"allowJs": true, // allow importing `.js` from `.ts`
-		"esModuleInterop": true, // allow default imports for CommonJS modules
+		"allowJs": true,
+		"esModuleInterop": true,
 		"strict": true,
 		"forceConsistentCasingInFileNames": true,
-		"skipLibCheck": true
+		"skipLibCheck": true,
+		"declaration": true
 	},
-	"exclude": ["node_modules"]
+	"exclude": ["node_modules"],
+	"include": ["src", "tests"]
 }
