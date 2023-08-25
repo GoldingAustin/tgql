@@ -18,7 +18,7 @@
 		"url": "https://github.com/GoldingAustin/tgql"
 	},
 	"license": "MIT",
-	"version": "0.0.1-alpha.6",
+	"version": "0.0.1-alpha.7",
 	"main": "./src/index.ts",
 	"types": "./src/index.ts",
 	"exports": {
@@ -50,7 +50,7 @@
 		"graphql": "^16"
 	},
 	"dependencies": {
-		"@tgql/server": "workspace:*",
-		"@tgql/client": "workspace:*"
+		"@tgql/client": "workspace:*",
+		"@tgql/server": "workspace:*"
 	}
 }

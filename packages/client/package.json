@@ -1,7 +1,7 @@
 {
 	"name": "@tgql/client",
 	"description": "GraphQL Client for @tgql/server (without any file generation)",
-	"version": "0.0.0-alpha.0",
+	"version": "0.0.0-alpha.1",
 	"author": {
 		"name": "Austin Golding",
 		"email": "austin.golding.dev@icloud.com"
